@@ -39,6 +39,14 @@ type PodStatus struct {
 	Message         string      `json:"message,omitempty"`
 }
 
+type containerState string
+
+const (
+	containerWaiting    containerState = "waiting"
+	containerTerminated containerState = "terminated"
+	containerRunning    containerState = "running"
+)
+
 // JudgePodStatus judges the current status of pod from Pod.Status
 func JudgePodStatus(pod *v1.Pod) PodStatus {
 	if pod == nil {
@@ -50,10 +58,7 @@ func JudgePodStatus(pod *v1.Pod) PodStatus {
 	initContainers := len(pod.Spec.InitContainers)
 	totalContainers := len(pod.Spec.Containers)
 	phase := pod.Status.Phase
-	reason := string(pod.Status.Phase)
-	if pod.Status.Reason != "" {
-		reason = pod.Status.Reason
-	}
+	reason := chose(string(pod.Status.Phase), pod.Status.Reason)
 	message := ""
 
 	if phase == v1.PodPending {
@@ -110,25 +115,29 @@ func JudgePodStatus(pod *v1.Pod) PodStatus {
 			container := pod.Status.ContainerStatuses[i]
 			restarts += int(container.RestartCount)
 
-			if container.State.Waiting != nil && container.State.Waiting.Reason != "" {
-				reason = container.State.Waiting.Reason
-				message = container.State.Waiting.Message
-			} else if container.State.Terminated != nil {
+			state, stateReason, stateMessage := judgeContainerState(container.State)
+			reason = chose(reason, stateReason)
+			message = chose(message, stateMessage)
+			switch state {
+			case containerWaiting:
+				// when pod is in CrashLoopBackOff, the uesful information is stored in lastTerminationState
+				if reason == "CrashLoopBackOff" {
+					phase = PodError
+					lastState, lastReason, lastMessage := judgeContainerState(container.LastTerminationState)
+					if lastState == containerTerminated {
+						reason = chose(reason, lastReason)
+						message = chose(message, lastMessage)
+					}
+				}
+			case containerTerminated:
 				if container.State.Terminated.ExitCode != 0 {
 					// if container's exit code != 0, we think that pod is in error phase
 					phase = PodError
 				}
-				reason = fmt.Sprintf("ExitCode:%d", container.State.Terminated.ExitCode)
-				message = container.State.Terminated.Message
-
-				if container.State.Terminated.Signal != 0 {
-					reason = fmt.Sprintf("Signal:%d", container.State.Terminated.Signal)
+			case containerRunning:
+				if container.Ready {
+					readyContainers++
 				}
-				if container.State.Terminated.Reason != "" {
-					reason = container.State.Terminated.Reason
-				}
-			} else if container.Ready && container.State.Running != nil {
-				readyContainers++
 			}
 		}
 	}
@@ -175,4 +184,32 @@ func JudgePodStatus(pod *v1.Pod) PodStatus {
 		Reason:          reason,
 		Message:         message,
 	}
+}
+
+func judgeContainerState(conaitnerState v1.ContainerState) (state containerState, reason, message string) {
+	if conaitnerState.Waiting != nil {
+		state = containerWaiting
+		reason = conaitnerState.Waiting.Reason
+		message = conaitnerState.Waiting.Message
+	} else if conaitnerState.Terminated != nil {
+		state = containerTerminated
+		reason = fmt.Sprintf("ExitCode:%d", conaitnerState.Terminated.ExitCode)
+		message = conaitnerState.Terminated.Message
+		if conaitnerState.Terminated.Signal != 0 {
+			reason = fmt.Sprintf("Signal:%d", conaitnerState.Terminated.Signal)
+		}
+		if conaitnerState.Terminated.Reason != "" {
+			reason = conaitnerState.Terminated.Reason
+		}
+	} else if conaitnerState.Running != nil {
+		state = containerRunning
+	}
+	return
+}
+
+func chose(origin, newOne string) string {
+	if newOne != "" {
+		return newOne
+	}
+	return origin
 }
