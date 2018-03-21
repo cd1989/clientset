@@ -5,5 +5,5 @@ clean:
 
 gen: clean
 	cp -r expansions/* ./
-	sh cmd/autogenerate.sh
+	bash cmd/autogenerate.sh
 

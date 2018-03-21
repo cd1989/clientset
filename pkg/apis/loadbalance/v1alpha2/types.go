@@ -94,6 +94,8 @@ const (
 
 // ProvidersSpec is a description of prividers
 type ProvidersSpec struct {
+	// external provider
+	External *ExternalProvider `json:"external,omitempty"`
 	// ipvs dr
 	Ipvsdr *IpvsdrProvider `json:"ipvsdr,omitempty"`
 	// aliyun slb
@@ -102,10 +104,15 @@ type ProvidersSpec struct {
 	Azure *AzureProvider `json:"azure,omitempty"`
 }
 
+// ExternalProvider is a provider docking for external loadbalancer
+type ExternalProvider struct {
+	VIP string `json:"vip"`
+}
+
 // IpvsdrProvider is a ipvs dr provider
 type IpvsdrProvider struct {
 	// Virtual IP Address
-	Vip string `json:"vip"`
+	VIP string `json:"vip"`
 	// ipvs shceduler algorithm type
 	Scheduler IpvsScheduler `json:"scheduler"`
 }
@@ -160,6 +167,8 @@ type ProxyStatus struct {
 
 // ProvidersStatuses represents the current status of Providers
 type ProvidersStatuses struct {
+	// external loadbalancer provider
+	External *ExpternalProviderStatus `json:"external,omitempty"`
 	// ipvs dr
 	Ipvsdr *IpvsdrProviderStatus `json:"ipvsdr,omitempty"`
 	// aliyun slb
@@ -168,15 +177,16 @@ type ProvidersStatuses struct {
 	Azure *AzureProviderStatus `json:"azure,omitempty"`
 }
 
-// ServiceProviderStatus represents the current status of the service provider
-type ServiceProviderStatus struct {
+// ExpternalProviderStatus represents the current status of the external provider
+type ExpternalProviderStatus struct {
+	VIP string `json:"vip"`
 }
 
 // IpvsdrProviderStatus represents the current status of the ipvsdr provider
 type IpvsdrProviderStatus struct {
 	PodStatuses `json:",inline"`
 	Deployment  string `json:"deployment,omitempty"`
-	Vip         string `json:"vip"`
+	VIP         string `json:"vip"`
 	Vrid        *int   `json:"vrid,omitempty"`
 }
 

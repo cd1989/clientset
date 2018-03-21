@@ -16,7 +16,7 @@ type LoadbalanceV1alpha2Interface interface {
 	LoadBalancersGetter
 }
 
-// LoadbalanceV1alpha2Client is used to interact with features provided by the loadbalance.caicloud.io group.
+// LoadbalanceV1alpha2Client is used to interact with features provided by the loadbalance group.
 type LoadbalanceV1alpha2Client struct {
 	restClient rest.Interface
 }
