@@ -214,6 +214,7 @@ type PodStatus struct {
 	ReadyContainers int32  `json:"readyContainers"`
 	TotalContainers int32  `json:"totalContainers"`
 	NodeName        string `json:"nodeName"`
+	Phase           string `json:"phase"`
 	Reason          string `json:"reason"`
 	Message         string `json:"message"`
 }
