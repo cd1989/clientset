@@ -289,10 +289,13 @@ type MachineEnvironment struct {
 }
 
 type MachineSystemInfo struct {
-	BootTime      uint64 `json:"bootTime"`
-	Hostname      string `json:"hostname"`
-	Os            string `json:"os"`
-	KernelVersion string `json:"kernelVersion"`
+	BootTime        uint64 `json:"bootTime"`
+	Hostname        string `json:"hostname"`
+	OS              string `json:"os"`
+	Platform        string `json:"platform"`
+	PlatformFamily  string `json:"platformFamily"`
+	PlatformVersion string `json:"platformVersion"`
+	KernelVersion   string `json:"kernelVersion"`
 }
 
 type MachineHardwareInfo struct {
