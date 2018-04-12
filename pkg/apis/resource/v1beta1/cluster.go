@@ -285,6 +285,7 @@ type MachineEnvironment struct {
 	HardwareInfo       MachineHardwareInfo `json:"hardwareInfo"`
 	DiskInfo           []MachineDiskInfo   `json:"diskInfo"`
 	NicInfo            []MachineNicInfo    `json:"nicInfo"`
+	GPUInfo            []MachineGPUInfo    `json:"gpuInfo"`
 	LastTransitionTime metav1.Time         `json:"lastTransitionTime"`
 }
 
@@ -321,4 +322,16 @@ type MachineNicInfo struct {
 	HardwareAddr string   `json:"hardwareAddr"`
 	Status       string   `json:"status"`
 	Addrs        []string `json:"addrs"`
+}
+
+type MachineGPUInfo struct {
+	UUID             string `json:"uuid"`
+	ProductName      string `json:"productName"`
+	ProductBrand     string `json:"productBrand"`
+	PCIeGen          string `json:"pcieGen"`
+	PCILinkWidths    string `json:"pciLinkWidths"`
+	MemoryTotal      string `json:"memoryTotal"`
+	MemoryClock      string `json:"memoryClock"`
+	GraphicsAppClock string `json:"graphicsAppClock"`
+	GraphicsMaxClock string `json:"graphicsMaxClock"`
 }
