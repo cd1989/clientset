@@ -8,7 +8,7 @@ ORIGIN=$(pwd)
 cd $(dirname ${BASH_SOURCE[0]})
 
 # Add your packages here
-PKGS=$(find ../pkg/apis/ -type d -mindepth 2 -maxdepth 2 2>/dev/null | sed 's|^\.\./pkg/apis/||g')
+PKGS=$(find ../pkg/apis/ -type d -mindepth 2 -maxdepth 2 2>/dev/null | sed 's|^\.\./pkg/apis/*||g')
 
 echo $PKGS
 
