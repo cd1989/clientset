@@ -17,27 +17,41 @@ limitations under the License.
 package main
 
 import (
+	"flag"
 	"path/filepath"
 
 	"github.com/caicloud/clientset/cmd/informer-gen/generators"
-	"k8s.io/gengo/args"
-
+	"github.com/caicloud/clientset/cmd/util"
 	"github.com/golang/glog"
 	"github.com/spf13/pflag"
+	"k8s.io/gengo/args"
+
+	generatorargs "github.com/caicloud/clientset/cmd/informer-gen/args"
 )
 
 func main() {
-	customArgs := &generators.CustomArgs{}
-	arguments := &args.GeneratorArgs{
-		OutputBase:       args.DefaultSourceTree(),
-		GoHeaderFilePath: filepath.Join(args.DefaultSourceTree(), "github.com/caicloud/clientset/hack/boilerplate/boilerplate.go.txt"),
-		CustomArgs:       customArgs,
-	}
-	arguments.AddFlags(pflag.CommandLine)
+	genericArgs, customArgs := generatorargs.NewDefaults()
+
+	// Override defaults.
+	// TODO: move out of informer-gen
+	genericArgs.GoHeaderFilePath = filepath.Join(args.DefaultSourceTree(), util.BoilerplatePath())
+	genericArgs.OutputPackagePath = "k8s.io/kubernetes/pkg/client/informers/informers_generated"
+	customArgs.VersionedClientSetPackage = "k8s.io/kubernetes/pkg/client/clientset_generated/clientset"
+	customArgs.InternalClientSetPackage = "k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
+	customArgs.ListersPackage = "k8s.io/kubernetes/pkg/client/listers"
+
+	genericArgs.AddFlags(pflag.CommandLine)
 	customArgs.AddFlags(pflag.CommandLine)
+	flag.Set("logtostderr", "true")
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	pflag.Parse()
+
+	if err := generatorargs.Validate(genericArgs); err != nil {
+		glog.Fatalf("Error: %v", err)
+	}
 
 	// Run it.
-	if err := arguments.Execute(
+	if err := genericArgs.Execute(
 		generators.NameSystems(),
 		generators.DefaultNameSystem(),
 		generators.Packages,

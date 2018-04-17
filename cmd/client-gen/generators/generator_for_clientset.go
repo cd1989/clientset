@@ -32,7 +32,8 @@ import (
 type genClientset struct {
 	generator.DefaultGen
 	groups             []clientgentypes.GroupVersions
-	outPutPath         string
+	groupGoNames       map[clientgentypes.GroupVersion]string
+	clientsetPackage   string
 	outputPackage      string
 	imports            namer.ImportTracker
 	clientsetGenerated bool
@@ -55,11 +56,11 @@ func (g *genClientset) Filter(c *generator.Context, t *types.Type) bool {
 
 func (g *genClientset) Imports(c *generator.Context) (imports []string) {
 	imports = append(imports, g.imports.ImportLines()...)
-	clientsetPackage := g.outPutPath
 	for _, group := range g.groups {
 		for _, version := range group.Versions {
-			typedClientPath := filepath.Join(clientsetPackage, "typed", group.Group.NonEmpty(), version.NonEmpty())
-			imports = append(imports, strings.ToLower(fmt.Sprintf("%s%s \"%s\"", group.Group.NonEmpty(), version.NonEmpty(), typedClientPath)))
+			typedClientPath := filepath.Join(g.clientsetPackage, "typed", group.PackageName, version.NonEmpty())
+			groupAlias := strings.ToLower(g.groupGoNames[clientgentypes.GroupVersion{group.Group, version.Version}])
+			imports = append(imports, strings.ToLower(fmt.Sprintf("%s%s \"%s\"", groupAlias, version.NonEmpty(), typedClientPath)))
 		}
 	}
 	return
@@ -70,20 +71,23 @@ func (g *genClientset) GenerateType(c *generator.Context, t *types.Type, w io.Wr
 	// perhaps we can adapt the go2ild framework to this kind of usage.
 	sw := generator.NewSnippetWriter(w, c, "$", "$")
 
-	allGroups := clientgentypes.ToGroupVersionPackages(g.groups)
-
+	allGroups := clientgentypes.ToGroupVersionInfo(g.groups, g.groupGoNames)
 	m := map[string]interface{}{
-		"allGroups":                  allGroups,
-		"Config":                     c.Universe.Type(types.Name{Package: "k8s.io/client-go/rest", Name: "Config"}),
-		"DefaultKubernetesUserAgent": c.Universe.Function(types.Name{Package: "k8s.io/client-go/rest", Name: "DefaultKubernetesUserAgent"}),
-		"RESTClientInterface":        c.Universe.Type(types.Name{Package: "k8s.io/client-go/rest", Name: "Interface"}),
-		"ClientInterface":            c.Universe.Type(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "Interface"}),
-		"Clientset":                  c.Universe.Type(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "Clientset"}),
-		"NewForConfig":               c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "NewForConfig"}),
-		"NewForConfigOrDie":          c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "NewForConfigOrDie"}),
-		"New":                        c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "New"}),
+		"allGroups":                            allGroups,
+		"Config":                               c.Universe.Type(types.Name{Package: "k8s.io/client-go/rest", Name: "Config"}),
+		"DefaultKubernetesUserAgent":           c.Universe.Function(types.Name{Package: "k8s.io/client-go/rest", Name: "DefaultKubernetesUserAgent"}),
+		"RESTClientInterface":                  c.Universe.Type(types.Name{Package: "k8s.io/client-go/rest", Name: "Interface"}),
+		"DiscoveryInterface":                   c.Universe.Type(types.Name{Package: "k8s.io/client-go/discovery", Name: "DiscoveryInterface"}),
+		"DiscoveryClient":                      c.Universe.Type(types.Name{Package: "k8s.io/client-go/discovery", Name: "DiscoveryClient"}),
+		"NewDiscoveryClientForConfig":          c.Universe.Function(types.Name{Package: "k8s.io/client-go/discovery", Name: "NewDiscoveryClientForConfig"}),
+		"NewDiscoveryClientForConfigOrDie":     c.Universe.Function(types.Name{Package: "k8s.io/client-go/discovery", Name: "NewDiscoveryClientForConfigOrDie"}),
+		"NewDiscoveryClient":                   c.Universe.Function(types.Name{Package: "k8s.io/client-go/discovery", Name: "NewDiscoveryClient"}),
 		"flowcontrolNewTokenBucketRateLimiter": c.Universe.Function(types.Name{Package: "k8s.io/client-go/util/flowcontrol", Name: "NewTokenBucketRateLimiter"}),
-		"glogErrorf":                           c.Universe.Function(types.Name{Package: "github.com/golang/glog", Name: "Errorf"}),
+		"Interface":                            c.Universe.Type(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "Interface"}),
+		"Clientset":                            c.Universe.Type(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "Clientset"}),
+		"NewForConfig":                         c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "NewForConfig"}),
+		"NewForConfigOrDie":                    c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "NewForConfigOrDie"}),
+		"New":                                  c.Universe.Function(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "New"}),
 	}
 	sw.Do(clientsetInterface, m)
 	sw.Do(clientsetTemplate, m)
@@ -103,10 +107,10 @@ func (g *genClientset) GenerateType(c *generator.Context, t *types.Type, w io.Wr
 
 var clientsetInterface = `
 type Interface interface {
-	$.ClientInterface|raw$
-    $range .allGroups$$.GroupVersion$() $.PackageName$.$.GroupVersion$Interface
+	$.Interface|raw$
+	$range .allGroups$$.GroupGoName$$.Version$() $.PackageAlias$.$.GroupGoName$$.Version$Interface
 	$if .IsDefaultVersion$// Deprecated: please explicitly pick a version if possible.
-	$.Group$() $.PackageName$.$.GroupVersion$Interface
+	$.GroupGoName$() $.PackageAlias$.$.GroupGoName$$.Version$Interface
 	$end$$end$
 }
 `
@@ -116,29 +120,23 @@ var clientsetTemplate = `
 // version included in a Clientset.
 type Clientset struct {
 	*$.Clientset|raw$
-    $range .allGroups$*$.PackageName$.$.GroupVersion$Client
-    $end$
+	$range .allGroups$$.LowerCaseGroupGoName$$.Version$ *$.PackageAlias$.$.GroupGoName$$.Version$Client
+	$end$
 }
 `
 
 var clientsetInterfaceImplTemplate = `
-// $.GroupVersion$ retrieves the $.GroupVersion$Client
-func (c *Clientset) $.GroupVersion$() $.PackageName$.$.GroupVersion$Interface {
-	if c == nil {
-		return nil
-	}
-	return c.$.GroupVersion$Client
+// $.GroupGoName$$.Version$ retrieves the $.GroupGoName$$.Version$Client
+func (c *Clientset) $.GroupGoName$$.Version$() $.PackageAlias$.$.GroupGoName$$.Version$Interface {
+	return c.$.LowerCaseGroupGoName$$.Version$
 }
 `
 
 var clientsetInterfaceDefaultVersionImpl = `
-// Deprecated: $.Group$ retrieves the default version of $.Group$Client.
+// Deprecated: $.GroupGoName$ retrieves the default version of $.GroupGoName$Client.
 // Please explicitly pick a version.
-func (c *Clientset) $.Group$() $.PackageName$.$.GroupVersion$Interface {
-	if c == nil {
-		return nil
-	}
-	return c.$.GroupVersion$Client
+func (c *Clientset) $.GroupGoName$() $.PackageAlias$.$.GroupGoName$$.Version$Interface {
+	return c.$.LowerCaseGroupGoName$$.Version$
 }
 `
 
@@ -151,14 +149,13 @@ func NewForConfig(c *$.Config|raw$) (*Clientset, error) {
 	}
 	var cs Clientset
 	var err error
-$range .allGroups$    cs.$.GroupVersion$Client, err =$.PackageName$.NewForConfig(&configShallowCopy)
+$range .allGroups$    cs.$.LowerCaseGroupGoName$$.Version$, err =$.PackageAlias$.NewForConfig(&configShallowCopy)
 	if err!=nil {
 		return nil, err
 	}
 $end$
 	cs.Clientset, err = $.NewForConfig|raw$(&configShallowCopy)
 	if err!=nil {
-		$.glogErrorf|raw$("failed to create the client-go Clientset: %v", err)
 		return nil, err
 	}
 	return &cs, nil
@@ -170,7 +167,7 @@ var newClientsetForConfigOrDieTemplate = `
 // panics if there is an error in the config.
 func NewForConfigOrDie(c *$.Config|raw$) *Clientset {
 	var cs Clientset
-$range .allGroups$    cs.$.GroupVersion$Client =$.PackageName$.NewForConfigOrDie(c)
+$range .allGroups$    cs.$.LowerCaseGroupGoName$$.Version$ =$.PackageAlias$.NewForConfigOrDie(c)
 $end$
 	cs.Clientset = $.NewForConfigOrDie|raw$(c)
 	return &cs
@@ -181,7 +178,7 @@ var newClientsetForRESTClientTemplate = `
 // New creates a new Clientset for the given RESTClient.
 func New(c $.RESTClientInterface|raw$) *Clientset {
 	var cs Clientset
-$range .allGroups$    cs.$.GroupVersion$Client =$.PackageName$.New(c)
+$range .allGroups$    cs.$.LowerCaseGroupGoName$$.Version$ =$.PackageAlias$.New(c)
 $end$
 	cs.Clientset = $.New|raw$(c)
 	return &cs

@@ -33,6 +33,7 @@ type genericGenerator struct {
 	outputPackage        string
 	imports              namer.ImportTracker
 	groupVersions        map[string]clientgentypes.GroupVersions
+	groupGoNames         map[string]string
 	typesForGroupVersion map[clientgentypes.GroupVersion][]*types.Type
 	filtered             bool
 }
@@ -60,13 +61,14 @@ func (g *genericGenerator) Namers(c *generator.Context) namer.NameSystems {
 
 func (g *genericGenerator) Imports(c *generator.Context) (imports []string) {
 	imports = append(imports, g.imports.ImportLines()...)
-	// imports = append(imports, "fmt")
+	imports = append(imports, "fmt")
 	return
 }
 
 type group struct {
-	Name     string
-	Versions []*version
+	GroupGoName string
+	Name        string
+	Versions    []*version
 }
 
 type groupSort []group
@@ -77,6 +79,7 @@ func (g groupSort) Swap(i, j int)      { g[i], g[j] = g[j], g[i] }
 
 type version struct {
 	Name      string
+	GoName    string
 	Resources []*types.Type
 }
 
@@ -95,15 +98,17 @@ func (g *genericGenerator) GenerateType(c *generator.Context, t *types.Type, w i
 	schemeGVs := make(map[*version]*types.Type)
 
 	orderer := namer.Orderer{Namer: namer.NewPrivateNamer(0)}
-	for _, groupVersions := range g.groupVersions {
+	for groupPackageName, groupVersions := range g.groupVersions {
 		group := group{
-			Name:     namer.IC(groupVersions.Group.NonEmpty()),
-			Versions: []*version{},
+			GroupGoName: g.groupGoNames[groupPackageName],
+			Name:        groupVersions.Group.NonEmpty(),
+			Versions:    []*version{},
 		}
 		for _, v := range groupVersions.Versions {
-			gv := clientgentypes.GroupVersion{Group: groupVersions.Group, Version: v}
+			gv := clientgentypes.GroupVersion{Group: groupVersions.Group, Version: v.Version}
 			version := &version{
-				Name:      namer.IC(v.NonEmpty()),
+				Name:      v.Version.NonEmpty(),
+				GoName:    namer.IC(v.Version.NonEmpty()),
 				Resources: orderer.OrderTypes(g.typesForGroupVersion[gv]),
 			}
 			schemeGVs[version] = c.Universe.Variable(types.Name{Package: g.typesForGroupVersion[gv][0].Name.Package, Name: "SchemeGroupVersion"})
@@ -122,7 +127,7 @@ func (g *genericGenerator) GenerateType(c *generator.Context, t *types.Type, w i
 		"schemeGVs":                  schemeGVs,
 		"schemaGroupResource":        c.Universe.Type(schemaGroupResource),
 		"schemaGroupVersionResource": c.Universe.Type(schemaGroupVersionResource),
-		"clientgoGenericInformer":    c.Universe.Type(clientgoGenericInformer),
+		"informersGenericInformer":   c.Universe.Type(types.Name{Package: "k8s.io/client-go/informers", Name: "GenericInformer"}),
 	}
 
 	sw.Do(genericInformer, m)
@@ -132,6 +137,7 @@ func (g *genericGenerator) GenerateType(c *generator.Context, t *types.Type, w i
 }
 
 var genericInformer = `
+
 type genericInformer struct {
 	informer {{.cacheSharedIndexInformer|raw}}
 	resource {{.schemaGroupResource|raw}}
@@ -151,14 +157,14 @@ func (f *genericInformer) Lister() {{.cacheGenericLister|raw}} {
 var forResource = `
 // ForResource gives generic access to a shared informer of the matching type
 // TODO extend this to unknown resources with a client pool
-func (f *sharedInformerFactory) ForResource(resource {{.schemaGroupVersionResource|raw}}) ({{.clientgoGenericInformer|raw}}, error) {
+func (f *sharedInformerFactory) ForResource(resource {{.schemaGroupVersionResource|raw}}) ({{.informersGenericInformer|raw}}, error) {
 	switch resource {
-		{{range $group := .groups -}}
+		{{range $group := .groups -}}{{$GroupGoName := .GroupGoName -}}
 			{{range $version := .Versions -}}
-		// Group={{$group.Name}}, Version={{.Name}}
+	// Group={{$group.Name}}, Version={{.Name}}
 				{{range .Resources -}}
 	case {{index $.schemeGVs $version|raw}}.WithResource("{{.|allLowercasePlural}}"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.{{$group.Name}}().{{$version.Name}}().{{.|publicPlural}}().Informer()}, nil
+		return &genericInformer{resource: resource.GroupResource(), informer: f.{{$GroupGoName}}().{{$version.GoName}}().{{.|publicPlural}}().Informer()}, nil
 				{{end}}
 			{{end}}
 		{{end -}}

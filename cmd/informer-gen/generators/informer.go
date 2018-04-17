@@ -21,10 +21,12 @@ import (
 	"io"
 	"strings"
 
-	clientgentypes "github.com/caicloud/clientset/cmd/client-gen/types"
 	"k8s.io/gengo/generator"
 	"k8s.io/gengo/namer"
 	"k8s.io/gengo/types"
+
+	"github.com/caicloud/clientset/cmd/client-gen/generators/util"
+	clientgentypes "github.com/caicloud/clientset/cmd/client-gen/types"
 
 	"github.com/golang/glog"
 )
@@ -34,7 +36,9 @@ import (
 type informerGenerator struct {
 	generator.DefaultGen
 	outputPackage             string
+	groupPkgName              string
 	groupVersion              clientgentypes.GroupVersion
+	groupGoName               string
 	typeToGenerate            *types.Type
 	imports                   namer.ImportTracker
 	clientSetPackage          string
@@ -64,45 +68,47 @@ func (g *informerGenerator) GenerateType(c *generator.Context, t *types.Type, w 
 
 	glog.V(5).Infof("processing type %v", t)
 
-	//listerPackage := "k8s.io/kubernetes/pkg/client/listers/" + g.groupVersion.Group.NonEmpty() + "/" + strings.ToLower(g.groupVersion.Version.NonEmpty())
-	listerPackage := fmt.Sprintf("%s/%s/%s", g.listersPackage, g.groupVersion.Group.NonEmpty(), strings.ToLower(g.groupVersion.Version.NonEmpty()))
+	listerPackage := fmt.Sprintf("%s/%s/%s", g.listersPackage, g.groupPkgName, strings.ToLower(g.groupVersion.Version.NonEmpty()))
 	clientSetInterface := c.Universe.Type(types.Name{Package: g.clientSetPackage, Name: "Interface"})
 	informerFor := "InformerFor"
 
+	tags, err := util.ParseClientGenTags(append(t.SecondClosestCommentLines, t.CommentLines...))
+	if err != nil {
+		return err
+	}
+
 	m := map[string]interface{}{
-		"apiScheme":                             c.Universe.Type(apiScheme),
-		"cacheIndexers":                         c.Universe.Type(cacheIndexers),
-		"cacheListWatch":                        c.Universe.Type(cacheListWatch),
-		"cacheMetaNamespaceIndexFunc":           c.Universe.Function(cacheMetaNamespaceIndexFunc),
-		"cacheNamespaceIndex":                   c.Universe.Variable(cacheNamespaceIndex),
-		"cacheNewSharedIndexInformer":           c.Universe.Function(cacheNewSharedIndexInformer),
-		"cacheSharedIndexInformer":              c.Universe.Type(cacheSharedIndexInformer),
-		"clientSetInterface":                    clientSetInterface,
-		"group":                                 namer.IC(g.groupVersion.Group.NonEmpty()),
-		"informerFor":                           informerFor,
-		"interfacesSharedInformerFactory":       c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "SharedInformerFactory"}),
-		"listOptions":                           c.Universe.Type(listOptions),
-		"lister":                                c.Universe.Type(types.Name{Package: listerPackage, Name: t.Name.Name + "Lister"}),
-		"namespaceAll":                          c.Universe.Type(metav1NamespaceAll),
-		"namespaced":                            !extractBoolTagOrDie("nonNamespaced", t.SecondClosestCommentLines),
-		"newLister":                             c.Universe.Function(types.Name{Package: listerPackage, Name: "New" + t.Name.Name + "Lister"}),
-		"runtimeObject":                         c.Universe.Type(runtimeObject),
-		"timeDuration":                          c.Universe.Type(timeDuration),
-		"type":                                  t,
-		"v1ListOptions":                         c.Universe.Type(v1ListOptions),
-		"version":                               namer.IC(g.groupVersion.Version.String()),
-		"watchInterface":                        c.Universe.Type(watchInterface),
-		"clientgoInterface":                     c.Universe.Type(clientgoInterface),
-		"clientgoInternalSharedInformerFactory": c.Universe.Type(clientgoInternalSharedInformerFactory),
+		"apiScheme":                       c.Universe.Type(apiScheme),
+		"cacheIndexers":                   c.Universe.Type(cacheIndexers),
+		"cacheListWatch":                  c.Universe.Type(cacheListWatch),
+		"cacheMetaNamespaceIndexFunc":     c.Universe.Function(cacheMetaNamespaceIndexFunc),
+		"cacheNamespaceIndex":             c.Universe.Variable(cacheNamespaceIndex),
+		"cacheNewSharedIndexInformer":     c.Universe.Function(cacheNewSharedIndexInformer),
+		"cacheSharedIndexInformer":        c.Universe.Type(cacheSharedIndexInformer),
+		"clientSetInterface":              clientSetInterface,
+		"group":                           namer.IC(g.groupGoName),
+		"informerFor":                     informerFor,
+		"interfacesTweakListOptionsFunc":  c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "TweakListOptionsFunc"}),
+		"interfacesSharedInformerFactory": c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "SharedInformerFactory"}),
+		"listOptions":                     c.Universe.Type(listOptions),
+		"lister":                          c.Universe.Type(types.Name{Package: listerPackage, Name: t.Name.Name + "Lister"}),
+		"namespaceAll":                    c.Universe.Type(metav1NamespaceAll),
+		"namespaced":                      !tags.NonNamespaced,
+		"newLister":                       c.Universe.Function(types.Name{Package: listerPackage, Name: "New" + t.Name.Name + "Lister"}),
+		"runtimeObject":                   c.Universe.Type(runtimeObject),
+		"timeDuration":                    c.Universe.Type(timeDuration),
+		"type":                            t,
+		"v1ListOptions":                   c.Universe.Type(v1ListOptions),
+		"version":                         namer.IC(g.groupVersion.Version.String()),
+		"watchInterface":                  c.Universe.Type(watchInterface),
+		"kubernetesInterface":             c.Universe.Type(types.Name{Package: "k8s.io/client-go/kubernetes", Name: "Interface"}),
 	}
 
 	sw.Do(typeInformerInterface, m)
 	sw.Do(typeInformerStruct, m)
-	if len(g.groupVersion.Version) == 0 {
-		sw.Do(typeInformerConstructorInternal, m)
-	} else {
-		sw.Do(typeInformerConstructorVersioned, m)
-	}
+	sw.Do(typeInformerPublicConstructor, m)
+	sw.Do(typeFilteredInformerPublicConstructor, m)
+	sw.Do(typeInformerConstructor, m)
 	sw.Do(typeInformerInformer, m)
 	sw.Do(typeInformerLister, m)
 
@@ -120,56 +126,57 @@ type $.type|public$Informer interface {
 
 var typeInformerStruct = `
 type $.type|private$Informer struct {
-	factory $.clientgoInternalSharedInformerFactory|raw$
+	factory $.interfacesSharedInformerFactory|raw$
+	tweakListOptions $.interfacesTweakListOptionsFunc|raw$
+	$if .namespaced$namespace string$end$
 }
 `
 
-var typeInformerConstructorInternal = `
-func new$.type|public$Informer(client $.clientSetInterface|raw$, resyncPeriod $.timeDuration|raw$) $.cacheSharedIndexInformer|raw$ {
-	sharedIndexInformer := $.cacheNewSharedIndexInformer|raw$(
+var typeInformerPublicConstructor = `
+// New$.type|public$Informer constructs a new informer for $.type|public$ type.
+// Always prefer using an informer factory to get a shared informer instead of getting an independent
+// one. This reduces memory footprint and number of connections to the server.
+func New$.type|public$Informer(client $.clientSetInterface|raw$$if .namespaced$, namespace string$end$, resyncPeriod $.timeDuration|raw$, indexers $.cacheIndexers|raw$) $.cacheSharedIndexInformer|raw$ {
+	return NewFiltered$.type|public$Informer(client$if .namespaced$, namespace$end$, resyncPeriod, indexers, nil)
+}
+`
+
+var typeFilteredInformerPublicConstructor = `
+// NewFiltered$.type|public$Informer constructs a new informer for $.type|public$ type.
+// Always prefer using an informer factory to get a shared informer instead of getting an independent
+// one. This reduces memory footprint and number of connections to the server.
+func NewFiltered$.type|public$Informer(client $.clientSetInterface|raw$$if .namespaced$, namespace string$end$, resyncPeriod $.timeDuration|raw$, indexers $.cacheIndexers|raw$, tweakListOptions $.interfacesTweakListOptionsFunc|raw$) $.cacheSharedIndexInformer|raw$ {
+	return $.cacheNewSharedIndexInformer|raw$(
 		&$.cacheListWatch|raw${
 			ListFunc: func(options $.v1ListOptions|raw$) ($.runtimeObject|raw$, error) {
-				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$$.namespaceAll|raw$$end$).List(options)
+				if tweakListOptions != nil {
+					tweakListOptions(&options)
+				}
+				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$namespace$end$).List(options)
 			},
 			WatchFunc: func(options $.v1ListOptions|raw$) ($.watchInterface|raw$, error) {
-				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$$.namespaceAll|raw$$end$).Watch(options)
+				if tweakListOptions != nil {
+					tweakListOptions(&options)
+				}
+				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$namespace$end$).Watch(options)
 			},
 		},
 		&$.type|raw${},
 		resyncPeriod,
-		$.cacheIndexers|raw${$.cacheNamespaceIndex|raw$: $.cacheMetaNamespaceIndexFunc|raw$},
+		indexers,
 	)
-
-	return sharedIndexInformer
 }
 `
 
-var typeInformerConstructorVersioned = `
-func new$.type|public$Informer(client $.clientSetInterface|raw$, resyncPeriod $.timeDuration|raw$) $.cacheSharedIndexInformer|raw$ {
-	sharedIndexInformer := $.cacheNewSharedIndexInformer|raw$(
-		&$.cacheListWatch|raw${
-			ListFunc: func(options $.v1ListOptions|raw$) ($.runtimeObject|raw$, error) {
-				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$$.namespaceAll|raw$$end$).List(options)
-			},
-			WatchFunc: func(options $.v1ListOptions|raw$) ($.watchInterface|raw$, error) {
-				return client.$.group$$.version$().$.type|publicPlural$($if .namespaced$$.namespaceAll|raw$$end$).Watch(options)
-			},
-		},
-		&$.type|raw${},
-		resyncPeriod,
-		$.cacheIndexers|raw${$.cacheNamespaceIndex|raw$: $.cacheMetaNamespaceIndexFunc|raw$},
-	)
-
-	return sharedIndexInformer
+var typeInformerConstructor = `
+func (f *$.type|private$Informer) defaultInformer(client $.kubernetesInterface|raw$ , resyncPeriod $.timeDuration|raw$) $.cacheSharedIndexInformer|raw$ {
+	return NewFiltered$.type|public$Informer(client.($.clientSetInterface|raw$)$if .namespaced$, f.namespace$end$, resyncPeriod, $.cacheIndexers|raw${$.cacheNamespaceIndex|raw$: $.cacheMetaNamespaceIndexFunc|raw$}, f.tweakListOptions)
 }
 `
 
 var typeInformerInformer = `
 func (f *$.type|private$Informer) Informer() $.cacheSharedIndexInformer|raw$ {
-	return f.factory.$.informerFor$(&$.type|raw${}, func (client $.clientgoInterface|raw$, resyncPeriod $.timeDuration|raw$) $.cacheSharedIndexInformer|raw${
-		// panic if client is not *kubernetes.Clientset
-		return new$.type|public$Informer(client.($.clientSetInterface|raw$), resyncPeriod)
-	})
+	return f.factory.$.informerFor$(&$.type|raw${}, f.defaultInformer)
 }
 `
 
