@@ -10,6 +10,8 @@ import (
 	clientset "github.com/caicloud/clientset/kubernetes"
 	apiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1"
 	fakeapiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1/fake"
+	cnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1"
+	fakecnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1/fake"
 	configv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1"
 	fakeconfigv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1/fake"
 	loadbalancev1alpha2 "github.com/caicloud/clientset/kubernetes/typed/loadbalance/v1alpha2"
@@ -20,6 +22,8 @@ import (
 	fakeresourcev1alpha1 "github.com/caicloud/clientset/kubernetes/typed/resource/v1alpha1/fake"
 	resourcev1beta1 "github.com/caicloud/clientset/kubernetes/typed/resource/v1beta1"
 	fakeresourcev1beta1 "github.com/caicloud/clientset/kubernetes/typed/resource/v1beta1/fake"
+	tenantv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/tenant/v1alpha1"
+	faketenantv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/tenant/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -79,6 +83,16 @@ func (c *Clientset) Apiextensions() apiextensionsv1beta1.ApiextensionsV1beta1Int
 	return &fakeapiextensionsv1beta1.FakeApiextensionsV1beta1{Fake: &c.Fake}
 }
 
+// CnetworkingV1alpha1 retrieves the CnetworkingV1alpha1Client
+func (c *Clientset) CnetworkingV1alpha1() cnetworkingv1alpha1.CnetworkingV1alpha1Interface {
+	return &fakecnetworkingv1alpha1.FakeCnetworkingV1alpha1{Fake: &c.Fake}
+}
+
+// Cnetworking retrieves the CnetworkingV1alpha1Client
+func (c *Clientset) Cnetworking() cnetworkingv1alpha1.CnetworkingV1alpha1Interface {
+	return &fakecnetworkingv1alpha1.FakeCnetworkingV1alpha1{Fake: &c.Fake}
+}
+
 // ConfigV1alpha1 retrieves the ConfigV1alpha1Client
 func (c *Clientset) ConfigV1alpha1() configv1alpha1.ConfigV1alpha1Interface {
 	return &fakeconfigv1alpha1.FakeConfigV1alpha1{Fake: &c.Fake}
@@ -109,6 +123,11 @@ func (c *Clientset) Release() releasev1alpha1.ReleaseV1alpha1Interface {
 	return &fakereleasev1alpha1.FakeReleaseV1alpha1{Fake: &c.Fake}
 }
 
+// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
+func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
+	return &fakeresourcev1alpha1.FakeResourceV1alpha1{Fake: &c.Fake}
+}
+
 // ResourceV1beta1 retrieves the ResourceV1beta1Client
 func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 	return &fakeresourcev1beta1.FakeResourceV1beta1{Fake: &c.Fake}
@@ -119,7 +138,12 @@ func (c *Clientset) Resource() resourcev1beta1.ResourceV1beta1Interface {
 	return &fakeresourcev1beta1.FakeResourceV1beta1{Fake: &c.Fake}
 }
 
-// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
-func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
-	return &fakeresourcev1alpha1.FakeResourceV1alpha1{Fake: &c.Fake}
+// TenantV1alpha1 retrieves the TenantV1alpha1Client
+func (c *Clientset) TenantV1alpha1() tenantv1alpha1.TenantV1alpha1Interface {
+	return &faketenantv1alpha1.FakeTenantV1alpha1{Fake: &c.Fake}
+}
+
+// Tenant retrieves the TenantV1alpha1Client
+func (c *Clientset) Tenant() tenantv1alpha1.TenantV1alpha1Interface {
+	return &faketenantv1alpha1.FakeTenantV1alpha1{Fake: &c.Fake}
 }
