@@ -8,6 +8,7 @@ package kubernetes
 
 import (
 	apiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1"
+	apiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1"
 	cnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1"
 	configv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1"
 	loadbalancev1alpha2 "github.com/caicloud/clientset/kubernetes/typed/loadbalance/v1alpha2"
@@ -25,6 +26,9 @@ type Interface interface {
 	ApiextensionsV1beta1() apiextensionsv1beta1.ApiextensionsV1beta1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Apiextensions() apiextensionsv1beta1.ApiextensionsV1beta1Interface
+	ApiregistrationV1() apiregistrationv1.ApiregistrationV1Interface
+	// Deprecated: please explicitly pick a version if possible.
+	Apiregistration() apiregistrationv1.ApiregistrationV1Interface
 	CnetworkingV1alpha1() cnetworkingv1alpha1.CnetworkingV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Cnetworking() cnetworkingv1alpha1.CnetworkingV1alpha1Interface
@@ -37,10 +41,10 @@ type Interface interface {
 	ReleaseV1alpha1() releasev1alpha1.ReleaseV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Release() releasev1alpha1.ReleaseV1alpha1Interface
-	ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface
 	ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Resource() resourcev1beta1.ResourceV1beta1Interface
+	ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface
 	TenantV1alpha1() tenantv1alpha1.TenantV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Tenant() tenantv1alpha1.TenantV1alpha1Interface
@@ -51,12 +55,13 @@ type Interface interface {
 type Clientset struct {
 	*kubernetes.Clientset
 	apiextensionsV1beta1 *apiextensionsv1beta1.ApiextensionsV1beta1Client
+	apiregistrationV1    *apiregistrationv1.ApiregistrationV1Client
 	cnetworkingV1alpha1  *cnetworkingv1alpha1.CnetworkingV1alpha1Client
 	configV1alpha1       *configv1alpha1.ConfigV1alpha1Client
 	loadbalanceV1alpha2  *loadbalancev1alpha2.LoadbalanceV1alpha2Client
 	releaseV1alpha1      *releasev1alpha1.ReleaseV1alpha1Client
-	resourceV1alpha1     *resourcev1alpha1.ResourceV1alpha1Client
 	resourceV1beta1      *resourcev1beta1.ResourceV1beta1Client
+	resourceV1alpha1     *resourcev1alpha1.ResourceV1alpha1Client
 	tenantV1alpha1       *tenantv1alpha1.TenantV1alpha1Client
 }
 
@@ -69,6 +74,17 @@ func (c *Clientset) ApiextensionsV1beta1() apiextensionsv1beta1.ApiextensionsV1b
 // Please explicitly pick a version.
 func (c *Clientset) Apiextensions() apiextensionsv1beta1.ApiextensionsV1beta1Interface {
 	return c.apiextensionsV1beta1
+}
+
+// ApiregistrationV1 retrieves the ApiregistrationV1Client
+func (c *Clientset) ApiregistrationV1() apiregistrationv1.ApiregistrationV1Interface {
+	return c.apiregistrationV1
+}
+
+// Deprecated: Apiregistration retrieves the default version of ApiregistrationClient.
+// Please explicitly pick a version.
+func (c *Clientset) Apiregistration() apiregistrationv1.ApiregistrationV1Interface {
+	return c.apiregistrationV1
 }
 
 // CnetworkingV1alpha1 retrieves the CnetworkingV1alpha1Client
@@ -115,11 +131,6 @@ func (c *Clientset) Release() releasev1alpha1.ReleaseV1alpha1Interface {
 	return c.releaseV1alpha1
 }
 
-// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
-func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
-	return c.resourceV1alpha1
-}
-
 // ResourceV1beta1 retrieves the ResourceV1beta1Client
 func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 	return c.resourceV1beta1
@@ -129,6 +140,11 @@ func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 // Please explicitly pick a version.
 func (c *Clientset) Resource() resourcev1beta1.ResourceV1beta1Interface {
 	return c.resourceV1beta1
+}
+
+// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
+func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
+	return c.resourceV1alpha1
 }
 
 // TenantV1alpha1 retrieves the TenantV1alpha1Client
@@ -154,6 +170,10 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
+	cs.apiregistrationV1, err = apiregistrationv1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
 	cs.cnetworkingV1alpha1, err = cnetworkingv1alpha1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
@@ -170,11 +190,11 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	cs.resourceV1alpha1, err = resourcev1alpha1.NewForConfig(&configShallowCopy)
+	cs.resourceV1beta1, err = resourcev1beta1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
-	cs.resourceV1beta1, err = resourcev1beta1.NewForConfig(&configShallowCopy)
+	cs.resourceV1alpha1, err = resourcev1alpha1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -195,12 +215,13 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.apiextensionsV1beta1 = apiextensionsv1beta1.NewForConfigOrDie(c)
+	cs.apiregistrationV1 = apiregistrationv1.NewForConfigOrDie(c)
 	cs.cnetworkingV1alpha1 = cnetworkingv1alpha1.NewForConfigOrDie(c)
 	cs.configV1alpha1 = configv1alpha1.NewForConfigOrDie(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.NewForConfigOrDie(c)
 	cs.releaseV1alpha1 = releasev1alpha1.NewForConfigOrDie(c)
-	cs.resourceV1alpha1 = resourcev1alpha1.NewForConfigOrDie(c)
 	cs.resourceV1beta1 = resourcev1beta1.NewForConfigOrDie(c)
+	cs.resourceV1alpha1 = resourcev1alpha1.NewForConfigOrDie(c)
 	cs.tenantV1alpha1 = tenantv1alpha1.NewForConfigOrDie(c)
 
 	cs.Clientset = kubernetes.NewForConfigOrDie(c)
@@ -211,12 +232,13 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.apiextensionsV1beta1 = apiextensionsv1beta1.New(c)
+	cs.apiregistrationV1 = apiregistrationv1.New(c)
 	cs.cnetworkingV1alpha1 = cnetworkingv1alpha1.New(c)
 	cs.configV1alpha1 = configv1alpha1.New(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.New(c)
 	cs.releaseV1alpha1 = releasev1alpha1.New(c)
-	cs.resourceV1alpha1 = resourcev1alpha1.New(c)
 	cs.resourceV1beta1 = resourcev1beta1.New(c)
+	cs.resourceV1alpha1 = resourcev1alpha1.New(c)
 	cs.tenantV1alpha1 = tenantv1alpha1.New(c)
 
 	cs.Clientset = kubernetes.New(c)

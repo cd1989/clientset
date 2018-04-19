@@ -8,6 +8,7 @@ package informers
 
 import (
 	v1beta1 "github.com/caicloud/clientset/pkg/apis/apiextensions/v1beta1"
+	v1 "github.com/caicloud/clientset/pkg/apis/apiregistration/v1"
 	v1alpha1 "github.com/caicloud/clientset/pkg/apis/cnetworking/v1alpha1"
 	config_v1alpha1 "github.com/caicloud/clientset/pkg/apis/config/v1alpha1"
 	v1alpha2 "github.com/caicloud/clientset/pkg/apis/loadbalance/v1alpha2"
@@ -42,6 +43,10 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 	// Group=apiextensions.k8s.io, Version=v1beta1
 	case v1beta1.SchemeGroupVersion.WithResource("customresourcedefinitions"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Apiextensions().V1beta1().CustomResourceDefinitions().Informer()}, nil
+
+		// Group=apiregistration.k8s.io, Version=v1
+	case v1.SchemeGroupVersion.WithResource("apiservices"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Apiregistration().V1().APIServices().Informer()}, nil
 
 		// Group=cnetworking.caicloud.io, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithResource("networkpolicies"):

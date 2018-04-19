@@ -8,6 +8,7 @@ package fake
 
 import (
 	apiextensionsv1beta1 "github.com/caicloud/clientset/pkg/apis/apiextensions/v1beta1"
+	apiregistrationv1 "github.com/caicloud/clientset/pkg/apis/apiregistration/v1"
 	cnetworkingv1alpha1 "github.com/caicloud/clientset/pkg/apis/cnetworking/v1alpha1"
 	configv1alpha1 "github.com/caicloud/clientset/pkg/apis/config/v1alpha1"
 	loadbalancev1alpha2 "github.com/caicloud/clientset/pkg/apis/loadbalance/v1alpha2"
@@ -45,11 +46,12 @@ func init() {
 // correctly.
 func AddToScheme(scheme *runtime.Scheme) {
 	apiextensionsv1beta1.AddToScheme(scheme)
+	apiregistrationv1.AddToScheme(scheme)
 	cnetworkingv1alpha1.AddToScheme(scheme)
 	configv1alpha1.AddToScheme(scheme)
 	loadbalancev1alpha2.AddToScheme(scheme)
 	releasev1alpha1.AddToScheme(scheme)
-	resourcev1alpha1.AddToScheme(scheme)
 	resourcev1beta1.AddToScheme(scheme)
+	resourcev1alpha1.AddToScheme(scheme)
 	tenantv1alpha1.AddToScheme(scheme)
 }
