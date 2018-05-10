@@ -41,10 +41,10 @@ type Interface interface {
 	ReleaseV1alpha1() releasev1alpha1.ReleaseV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Release() releasev1alpha1.ReleaseV1alpha1Interface
+	ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface
 	ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Resource() resourcev1beta1.ResourceV1beta1Interface
-	ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface
 	TenantV1alpha1() tenantv1alpha1.TenantV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Tenant() tenantv1alpha1.TenantV1alpha1Interface
@@ -60,8 +60,8 @@ type Clientset struct {
 	configV1alpha1       *configv1alpha1.ConfigV1alpha1Client
 	loadbalanceV1alpha2  *loadbalancev1alpha2.LoadbalanceV1alpha2Client
 	releaseV1alpha1      *releasev1alpha1.ReleaseV1alpha1Client
-	resourceV1beta1      *resourcev1beta1.ResourceV1beta1Client
 	resourceV1alpha1     *resourcev1alpha1.ResourceV1alpha1Client
+	resourceV1beta1      *resourcev1beta1.ResourceV1beta1Client
 	tenantV1alpha1       *tenantv1alpha1.TenantV1alpha1Client
 }
 
@@ -131,6 +131,11 @@ func (c *Clientset) Release() releasev1alpha1.ReleaseV1alpha1Interface {
 	return c.releaseV1alpha1
 }
 
+// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
+func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
+	return c.resourceV1alpha1
+}
+
 // ResourceV1beta1 retrieves the ResourceV1beta1Client
 func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 	return c.resourceV1beta1
@@ -140,11 +145,6 @@ func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 // Please explicitly pick a version.
 func (c *Clientset) Resource() resourcev1beta1.ResourceV1beta1Interface {
 	return c.resourceV1beta1
-}
-
-// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
-func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
-	return c.resourceV1alpha1
 }
 
 // TenantV1alpha1 retrieves the TenantV1alpha1Client
@@ -190,11 +190,11 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	cs.resourceV1beta1, err = resourcev1beta1.NewForConfig(&configShallowCopy)
+	cs.resourceV1alpha1, err = resourcev1alpha1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
-	cs.resourceV1alpha1, err = resourcev1alpha1.NewForConfig(&configShallowCopy)
+	cs.resourceV1beta1, err = resourcev1beta1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -220,8 +220,8 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 	cs.configV1alpha1 = configv1alpha1.NewForConfigOrDie(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.NewForConfigOrDie(c)
 	cs.releaseV1alpha1 = releasev1alpha1.NewForConfigOrDie(c)
-	cs.resourceV1beta1 = resourcev1beta1.NewForConfigOrDie(c)
 	cs.resourceV1alpha1 = resourcev1alpha1.NewForConfigOrDie(c)
+	cs.resourceV1beta1 = resourcev1beta1.NewForConfigOrDie(c)
 	cs.tenantV1alpha1 = tenantv1alpha1.NewForConfigOrDie(c)
 
 	cs.Clientset = kubernetes.NewForConfigOrDie(c)
@@ -237,8 +237,8 @@ func New(c rest.Interface) *Clientset {
 	cs.configV1alpha1 = configv1alpha1.New(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.New(c)
 	cs.releaseV1alpha1 = releasev1alpha1.New(c)
-	cs.resourceV1beta1 = resourcev1beta1.New(c)
 	cs.resourceV1alpha1 = resourcev1alpha1.New(c)
+	cs.resourceV1beta1 = resourcev1beta1.New(c)
 	cs.tenantV1alpha1 = tenantv1alpha1.New(c)
 
 	cs.Clientset = kubernetes.New(c)

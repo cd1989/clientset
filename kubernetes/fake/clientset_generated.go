@@ -135,6 +135,11 @@ func (c *Clientset) Release() releasev1alpha1.ReleaseV1alpha1Interface {
 	return &fakereleasev1alpha1.FakeReleaseV1alpha1{Fake: &c.Fake}
 }
 
+// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
+func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
+	return &fakeresourcev1alpha1.FakeResourceV1alpha1{Fake: &c.Fake}
+}
+
 // ResourceV1beta1 retrieves the ResourceV1beta1Client
 func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 	return &fakeresourcev1beta1.FakeResourceV1beta1{Fake: &c.Fake}
@@ -143,11 +148,6 @@ func (c *Clientset) ResourceV1beta1() resourcev1beta1.ResourceV1beta1Interface {
 // Resource retrieves the ResourceV1beta1Client
 func (c *Clientset) Resource() resourcev1beta1.ResourceV1beta1Interface {
 	return &fakeresourcev1beta1.FakeResourceV1beta1{Fake: &c.Fake}
-}
-
-// ResourceV1alpha1 retrieves the ResourceV1alpha1Client
-func (c *Clientset) ResourceV1alpha1() resourcev1alpha1.ResourceV1alpha1Interface {
-	return &fakeresourcev1alpha1.FakeResourceV1alpha1{Fake: &c.Fake}
 }
 
 // TenantV1alpha1 retrieves the TenantV1alpha1Client
