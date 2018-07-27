@@ -2,6 +2,7 @@ package status
 
 import (
 	"fmt"
+	"strings"
 
 	"k8s.io/api/core/v1"
 )
@@ -120,8 +121,12 @@ func JudgePodStatus(pod *v1.Pod) PodStatus {
 			message = chose(message, stateMessage)
 			switch state {
 			case containerWaiting:
-				// when pod is in CrashLoopBackOff, the uesful information is stored in lastTerminationState
-				if reason == "CrashLoopBackOff" {
+				// There are some backoff state of container located in
+				// containerWaiting, we should treat the pod as Error pahse.
+				// And when pod is in CrashLoopBackOff, the uesful information
+				// is stored in lastTerminationState.
+				// please check the code in test case
+				if strings.HasSuffix(reason, "BackOff") {
 					phase = PodError
 					lastState, lastReason, lastMessage := judgeContainerState(container.LastTerminationState)
 					if lastState == containerTerminated {
