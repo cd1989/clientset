@@ -187,6 +187,40 @@ func TestJudgePodStatus(t *testing.T) {
 				Message: "Back-off 5m0s restarting failed container=c0 pod=mysql-mysql-v1-0-3888019538-vs2qd_qaz(e8ba3f78-204f-11e8-b3ff-525400c2714a)",
 			},
 		},
+		{
+			"ImagePullBackOff",
+			&v1.Pod{
+				Spec: v1.PodSpec{
+					Containers: []v1.Container{{Name: "error"}, {Name: "normal"}},
+				},
+				Status: v1.PodStatus{
+					Phase: v1.PodPending,
+					ContainerStatuses: []v1.ContainerStatus{
+						{
+							Ready: false,
+							State: v1.ContainerState{
+								Waiting: &v1.ContainerStateWaiting{
+									Reason:  "ImagePullBackOff",
+									Message: "Back-off pulling image xxxx",
+								},
+							},
+						},
+						{
+							Ready: true,
+							State: v1.ContainerState{
+								Running: &v1.ContainerStateRunning{},
+							},
+						},
+					},
+				},
+			},
+			PodStatus{
+				Ready: false, ReadyContainers: 1, TotalContainers: 2, RestartCount: 0,
+				Phase:   PodError,
+				Reason:  "ImagePullBackOff",
+				Message: "Back-off pulling image xxxx",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
