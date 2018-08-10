@@ -37,6 +37,8 @@ type ClusterSpec struct {
 	Versions         *ClusterVersions `json:"versions,omitempty"`
 	Masters          []string         `json:"masters"`
 	Nodes            []string         `json:"nodes"`
+	// deploy
+	DeployToolsExternalVars map[string]string `json:"deployToolsExternalVars"`
 	// adapt expired
 	ClusterToken string       `json:"clusterToken"`
 	Ratio        ClusterRatio `json:"ratio"`
