@@ -192,6 +192,13 @@ func (in *ClusterSpec) DeepCopyInto(out *ClusterSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.DeployToolsExternalVars != nil {
+		in, out := &in.DeployToolsExternalVars, &out.DeployToolsExternalVars
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	out.Ratio = in.Ratio
 	return
 }
