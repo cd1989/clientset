@@ -8,3 +8,7 @@ gen: clean
 	cp -r expansions/* ./
 	bash cmd/autogenerate.sh
 
+.PHONY: listerfactory 
+listerfactory: 
+	bash cmd/listerfactory.sh
+
