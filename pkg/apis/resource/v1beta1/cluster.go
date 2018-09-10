@@ -192,8 +192,8 @@ type ConfigList struct {
 // outside
 
 type ClusterNetwork struct {
-	Type NetworkType `json:"type"`
-	// TODO
+	Type        NetworkType `json:"type"`
+	ClusterCIDR string      `json:"clusterCIDR"`
 }
 
 type ClusterAuth struct {
