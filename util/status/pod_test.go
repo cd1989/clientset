@@ -9,10 +9,7 @@ import (
 	"k8s.io/api/core/v1"
 )
 
-func TestJudgePodStatus(t *testing.T) {
-	type args struct {
-		pod *v1.Pod
-	}
+func TestJudgePod(t *testing.T) {
 	tests := []struct {
 		name string
 		pod  *v1.Pod
@@ -224,7 +221,7 @@ func TestJudgePodStatus(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := JudgePodStatus(tt.pod); !reflect.DeepEqual(got, tt.want) {
+			if got := judgePod(tt.pod); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("JudgePodStatus() = %v, want %v", got, tt.want)
 			}
 		})
