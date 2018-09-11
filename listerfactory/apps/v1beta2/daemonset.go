@@ -8,8 +8,8 @@ package v1beta2
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta2 "k8s.io/api/apps/v1beta2"
-	core_v1 "k8s.io/api/core/v1"
+	appsv1beta2 "k8s.io/api/apps/v1beta2"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -39,7 +39,7 @@ func NewFilteredDaemonSetLister(client kubernetes.Interface, tweakListOptions in
 }
 
 // List lists all DaemonSets in the indexer.
-func (s *daemonSetLister) List(selector labels.Selector) (ret []*apps_v1beta2.DaemonSet, err error) {
+func (s *daemonSetLister) List(selector labels.Selector) (ret []*appsv1beta2.DaemonSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -56,11 +56,11 @@ func (s *daemonSetLister) List(selector labels.Selector) (ret []*apps_v1beta2.Da
 	return ret, nil
 }
 
-func (s *daemonSetLister) GetPodDaemonSets(*core_v1.Pod) ([]*apps_v1beta2.DaemonSet, error) {
+func (s *daemonSetLister) GetHistoryDaemonSets(*appsv1beta2.ControllerRevision) ([]*appsv1beta2.DaemonSet, error) {
 	return nil, nil
 }
 
-func (s *daemonSetLister) GetHistoryDaemonSets(*apps_v1beta2.ControllerRevision) ([]*apps_v1beta2.DaemonSet, error) {
+func (s *daemonSetLister) GetPodDaemonSets(*corev1.Pod) ([]*appsv1beta2.DaemonSet, error) {
 	return nil, nil
 }
 
@@ -78,7 +78,7 @@ type daemonSetNamespaceLister struct {
 }
 
 // List lists all DaemonSets in the indexer for a given namespace.
-func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1beta2.DaemonSet, err error) {
+func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*appsv1beta2.DaemonSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -96,6 +96,6 @@ func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1
 }
 
 // Get retrieves the DaemonSet from the indexer for a given namespace and name.
-func (s daemonSetNamespaceLister) Get(name string) (*apps_v1beta2.DaemonSet, error) {
+func (s daemonSetNamespaceLister) Get(name string) (*appsv1beta2.DaemonSet, error) {
 	return s.client.AppsV1beta2().DaemonSets(s.namespace).Get(name, v1.GetOptions{})
 }

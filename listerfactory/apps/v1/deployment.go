@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1 "k8s.io/api/apps/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/apps/v1"
@@ -38,14 +38,14 @@ func NewFilteredDeploymentLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all Deployments in the indexer.
-func (s *deploymentLister) List(selector labels.Selector) (ret []*apps_v1.Deployment, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *deploymentLister) List(selector labels.Selector) (ret []*appsv1.Deployment, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.AppsV1().Deployments(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.AppsV1().Deployments(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (s *deploymentLister) List(selector labels.Selector) (ret []*apps_v1.Deploy
 	return ret, nil
 }
 
-func (s *deploymentLister) GetDeploymentsForReplicaSet(*apps_v1.ReplicaSet) ([]*apps_v1.Deployment, error) {
+func (s *deploymentLister) GetDeploymentsForReplicaSet(*appsv1.ReplicaSet) ([]*appsv1.Deployment, error) {
 	return nil, nil
 }
 
@@ -73,8 +73,8 @@ type deploymentNamespaceLister struct {
 }
 
 // List lists all Deployments in the indexer for a given namespace.
-func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*apps_v1.Deployment, err error) {
-	listopt := meta_v1.ListOptions{
+func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*appsv1.Deployment, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -91,6 +91,6 @@ func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*apps_v
 }
 
 // Get retrieves the Deployment from the indexer for a given namespace and name.
-func (s deploymentNamespaceLister) Get(name string) (*apps_v1.Deployment, error) {
-	return s.client.AppsV1().Deployments(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s deploymentNamespaceLister) Get(name string) (*appsv1.Deployment, error) {
+	return s.client.AppsV1().Deployments(s.namespace).Get(name, metav1.GetOptions{})
 }

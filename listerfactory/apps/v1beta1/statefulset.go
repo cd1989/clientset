@@ -8,8 +8,8 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta1 "k8s.io/api/apps/v1beta1"
-	core_v1 "k8s.io/api/core/v1"
+	appsv1beta1 "k8s.io/api/apps/v1beta1"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -39,7 +39,7 @@ func NewFilteredStatefulSetLister(client kubernetes.Interface, tweakListOptions 
 }
 
 // List lists all StatefulSets in the indexer.
-func (s *statefulSetLister) List(selector labels.Selector) (ret []*apps_v1beta1.StatefulSet, err error) {
+func (s *statefulSetLister) List(selector labels.Selector) (ret []*appsv1beta1.StatefulSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -56,7 +56,7 @@ func (s *statefulSetLister) List(selector labels.Selector) (ret []*apps_v1beta1.
 	return ret, nil
 }
 
-func (s *statefulSetLister) GetPodStatefulSets(*core_v1.Pod) ([]*apps_v1beta1.StatefulSet, error) {
+func (s *statefulSetLister) GetPodStatefulSets(*corev1.Pod) ([]*appsv1beta1.StatefulSet, error) {
 	return nil, nil
 }
 
@@ -74,7 +74,7 @@ type statefulSetNamespaceLister struct {
 }
 
 // List lists all StatefulSets in the indexer for a given namespace.
-func (s statefulSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1beta1.StatefulSet, err error) {
+func (s statefulSetNamespaceLister) List(selector labels.Selector) (ret []*appsv1beta1.StatefulSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -92,6 +92,6 @@ func (s statefulSetNamespaceLister) List(selector labels.Selector) (ret []*apps_
 }
 
 // Get retrieves the StatefulSet from the indexer for a given namespace and name.
-func (s statefulSetNamespaceLister) Get(name string) (*apps_v1beta1.StatefulSet, error) {
+func (s statefulSetNamespaceLister) Get(name string) (*appsv1beta1.StatefulSet, error) {
 	return s.client.AppsV1beta1().StatefulSets(s.namespace).Get(name, v1.GetOptions{})
 }

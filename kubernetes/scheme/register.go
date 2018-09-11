@@ -49,7 +49,7 @@ func AddToScheme(scheme *runtime.Scheme) {
 	configv1alpha1.AddToScheme(scheme)
 	loadbalancev1alpha2.AddToScheme(scheme)
 	releasev1alpha1.AddToScheme(scheme)
-	resourcev1alpha1.AddToScheme(scheme)
 	resourcev1beta1.AddToScheme(scheme)
+	resourcev1alpha1.AddToScheme(scheme)
 	tenantv1alpha1.AddToScheme(scheme)
 }

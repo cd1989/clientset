@@ -8,8 +8,8 @@ package v1beta2
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta2 "k8s.io/api/apps/v1beta2"
-	core_v1 "k8s.io/api/core/v1"
+	appsv1beta2 "k8s.io/api/apps/v1beta2"
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -39,7 +39,7 @@ func NewFilteredReplicaSetLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all ReplicaSets in the indexer.
-func (s *replicaSetLister) List(selector labels.Selector) (ret []*apps_v1beta2.ReplicaSet, err error) {
+func (s *replicaSetLister) List(selector labels.Selector) (ret []*appsv1beta2.ReplicaSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -56,7 +56,7 @@ func (s *replicaSetLister) List(selector labels.Selector) (ret []*apps_v1beta2.R
 	return ret, nil
 }
 
-func (s *replicaSetLister) GetPodReplicaSets(*core_v1.Pod) ([]*apps_v1beta2.ReplicaSet, error) {
+func (s *replicaSetLister) GetPodReplicaSets(*corev1.Pod) ([]*appsv1beta2.ReplicaSet, error) {
 	return nil, nil
 }
 
@@ -74,7 +74,7 @@ type replicaSetNamespaceLister struct {
 }
 
 // List lists all ReplicaSets in the indexer for a given namespace.
-func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1beta2.ReplicaSet, err error) {
+func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*appsv1beta2.ReplicaSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -92,6 +92,6 @@ func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v
 }
 
 // Get retrieves the ReplicaSet from the indexer for a given namespace and name.
-func (s replicaSetNamespaceLister) Get(name string) (*apps_v1beta2.ReplicaSet, error) {
+func (s replicaSetNamespaceLister) Get(name string) (*appsv1beta2.ReplicaSet, error) {
 	return s.client.AppsV1beta2().ReplicaSets(s.namespace).Get(name, v1.GetOptions{})
 }

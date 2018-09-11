@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	storage_v1beta1 "k8s.io/api/storage/v1beta1"
+	storagev1beta1 "k8s.io/api/storage/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredStorageClassLister(client kubernetes.Interface, tweakListOptions
 }
 
 // List lists all StorageClasses in the indexer.
-func (s *storageClassLister) List(selector labels.Selector) (ret []*storage_v1beta1.StorageClass, err error) {
+func (s *storageClassLister) List(selector labels.Selector) (ret []*storagev1beta1.StorageClass, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *storageClassLister) List(selector labels.Selector) (ret []*storage_v1be
 }
 
 // Get retrieves the StorageClass from the index for a given name.
-func (s *storageClassLister) Get(name string) (*storage_v1beta1.StorageClass, error) {
+func (s *storageClassLister) Get(name string) (*storagev1beta1.StorageClass, error) {
 	return s.client.StorageV1beta1().StorageClasses().Get(name, v1.GetOptions{})
 }

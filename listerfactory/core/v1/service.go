@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -38,14 +38,14 @@ func NewFilteredServiceLister(client kubernetes.Interface, tweakListOptions inte
 }
 
 // List lists all Services in the indexer.
-func (s *serviceLister) List(selector labels.Selector) (ret []*core_v1.Service, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *serviceLister) List(selector labels.Selector) (ret []*corev1.Service, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.CoreV1().Services(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.CoreV1().Services(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (s *serviceLister) List(selector labels.Selector) (ret []*core_v1.Service, 
 	return ret, nil
 }
 
-func (s *serviceLister) GetPodServices(*core_v1.Pod) ([]*core_v1.Service, error) {
+func (s *serviceLister) GetPodServices(*corev1.Pod) ([]*corev1.Service, error) {
 	return nil, nil
 }
 
@@ -73,8 +73,8 @@ type serviceNamespaceLister struct {
 }
 
 // List lists all Services in the indexer for a given namespace.
-func (s serviceNamespaceLister) List(selector labels.Selector) (ret []*core_v1.Service, err error) {
-	listopt := meta_v1.ListOptions{
+func (s serviceNamespaceLister) List(selector labels.Selector) (ret []*corev1.Service, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -91,6 +91,6 @@ func (s serviceNamespaceLister) List(selector labels.Selector) (ret []*core_v1.S
 }
 
 // Get retrieves the Service from the indexer for a given namespace and name.
-func (s serviceNamespaceLister) Get(name string) (*core_v1.Service, error) {
-	return s.client.CoreV1().Services(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s serviceNamespaceLister) Get(name string) (*corev1.Service, error) {
+	return s.client.CoreV1().Services(s.namespace).Get(name, metav1.GetOptions{})
 }

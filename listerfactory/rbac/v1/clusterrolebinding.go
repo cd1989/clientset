@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	rbac_v1 "k8s.io/api/rbac/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/rbac/v1"
@@ -36,8 +36,8 @@ func NewFilteredClusterRoleBindingLister(client kubernetes.Interface, tweakListO
 }
 
 // List lists all ClusterRoleBindings in the indexer.
-func (s *clusterRoleBindingLister) List(selector labels.Selector) (ret []*rbac_v1.ClusterRoleBinding, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *clusterRoleBindingLister) List(selector labels.Selector) (ret []*rbacv1.ClusterRoleBinding, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -54,6 +54,6 @@ func (s *clusterRoleBindingLister) List(selector labels.Selector) (ret []*rbac_v
 }
 
 // Get retrieves the ClusterRoleBinding from the index for a given name.
-func (s *clusterRoleBindingLister) Get(name string) (*rbac_v1.ClusterRoleBinding, error) {
-	return s.client.RbacV1().ClusterRoleBindings().Get(name, meta_v1.GetOptions{})
+func (s *clusterRoleBindingLister) Get(name string) (*rbacv1.ClusterRoleBinding, error) {
+	return s.client.RbacV1().ClusterRoleBindings().Get(name, metav1.GetOptions{})
 }

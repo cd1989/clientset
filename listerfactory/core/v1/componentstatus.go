@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -36,8 +36,8 @@ func NewFilteredComponentStatusLister(client kubernetes.Interface, tweakListOpti
 }
 
 // List lists all ComponentStatuses in the indexer.
-func (s *componentStatusLister) List(selector labels.Selector) (ret []*core_v1.ComponentStatus, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *componentStatusLister) List(selector labels.Selector) (ret []*corev1.ComponentStatus, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -54,6 +54,6 @@ func (s *componentStatusLister) List(selector labels.Selector) (ret []*core_v1.C
 }
 
 // Get retrieves the ComponentStatus from the index for a given name.
-func (s *componentStatusLister) Get(name string) (*core_v1.ComponentStatus, error) {
-	return s.client.CoreV1().ComponentStatuses().Get(name, meta_v1.GetOptions{})
+func (s *componentStatusLister) Get(name string) (*corev1.ComponentStatus, error) {
+	return s.client.CoreV1().ComponentStatuses().Get(name, metav1.GetOptions{})
 }

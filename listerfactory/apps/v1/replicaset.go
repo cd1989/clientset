@@ -8,9 +8,9 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1 "k8s.io/api/apps/v1"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/apps/v1"
@@ -39,14 +39,14 @@ func NewFilteredReplicaSetLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all ReplicaSets in the indexer.
-func (s *replicaSetLister) List(selector labels.Selector) (ret []*apps_v1.ReplicaSet, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *replicaSetLister) List(selector labels.Selector) (ret []*appsv1.ReplicaSet, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.AppsV1().ReplicaSets(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.AppsV1().ReplicaSets(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (s *replicaSetLister) List(selector labels.Selector) (ret []*apps_v1.Replic
 	return ret, nil
 }
 
-func (s *replicaSetLister) GetPodReplicaSets(*core_v1.Pod) ([]*apps_v1.ReplicaSet, error) {
+func (s *replicaSetLister) GetPodReplicaSets(*corev1.Pod) ([]*appsv1.ReplicaSet, error) {
 	return nil, nil
 }
 
@@ -74,8 +74,8 @@ type replicaSetNamespaceLister struct {
 }
 
 // List lists all ReplicaSets in the indexer for a given namespace.
-func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1.ReplicaSet, err error) {
-	listopt := meta_v1.ListOptions{
+func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*appsv1.ReplicaSet, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -92,6 +92,6 @@ func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v
 }
 
 // Get retrieves the ReplicaSet from the indexer for a given namespace and name.
-func (s replicaSetNamespaceLister) Get(name string) (*apps_v1.ReplicaSet, error) {
-	return s.client.AppsV1().ReplicaSets(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s replicaSetNamespaceLister) Get(name string) (*appsv1.ReplicaSet, error) {
+	return s.client.AppsV1().ReplicaSets(s.namespace).Get(name, metav1.GetOptions{})
 }

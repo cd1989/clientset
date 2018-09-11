@@ -8,7 +8,7 @@ package v1alpha1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	scheduling_v1alpha1 "k8s.io/api/scheduling/v1alpha1"
+	schedulingv1alpha1 "k8s.io/api/scheduling/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredPriorityClassLister(client kubernetes.Interface, tweakListOption
 }
 
 // List lists all PriorityClasses in the indexer.
-func (s *priorityClassLister) List(selector labels.Selector) (ret []*scheduling_v1alpha1.PriorityClass, err error) {
+func (s *priorityClassLister) List(selector labels.Selector) (ret []*schedulingv1alpha1.PriorityClass, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *priorityClassLister) List(selector labels.Selector) (ret []*scheduling_
 }
 
 // Get retrieves the PriorityClass from the index for a given name.
-func (s *priorityClassLister) Get(name string) (*scheduling_v1alpha1.PriorityClass, error) {
+func (s *priorityClassLister) Get(name string) (*schedulingv1alpha1.PriorityClass, error) {
 	return s.client.SchedulingV1alpha1().PriorityClasses().Get(name, v1.GetOptions{})
 }

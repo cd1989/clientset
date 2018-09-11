@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	batch_v1beta1 "k8s.io/api/batch/v1beta1"
+	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredCronJobLister(client kubernetes.Interface, tweakListOptions inte
 }
 
 // List lists all CronJobs in the indexer.
-func (s *cronJobLister) List(selector labels.Selector) (ret []*batch_v1beta1.CronJob, err error) {
+func (s *cronJobLister) List(selector labels.Selector) (ret []*batchv1beta1.CronJob, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type cronJobNamespaceLister struct {
 }
 
 // List lists all CronJobs in the indexer for a given namespace.
-func (s cronJobNamespaceLister) List(selector labels.Selector) (ret []*batch_v1beta1.CronJob, err error) {
+func (s cronJobNamespaceLister) List(selector labels.Selector) (ret []*batchv1beta1.CronJob, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s cronJobNamespaceLister) List(selector labels.Selector) (ret []*batch_v1b
 }
 
 // Get retrieves the CronJob from the indexer for a given namespace and name.
-func (s cronJobNamespaceLister) Get(name string) (*batch_v1beta1.CronJob, error) {
+func (s cronJobNamespaceLister) Get(name string) (*batchv1beta1.CronJob, error) {
 	return s.client.BatchV1beta1().CronJobs(s.namespace).Get(name, v1.GetOptions{})
 }

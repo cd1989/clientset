@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	extensions_v1beta1 "k8s.io/api/extensions/v1beta1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredIngressLister(client kubernetes.Interface, tweakListOptions inte
 }
 
 // List lists all Ingresses in the indexer.
-func (s *ingressLister) List(selector labels.Selector) (ret []*extensions_v1beta1.Ingress, err error) {
+func (s *ingressLister) List(selector labels.Selector) (ret []*extensionsv1beta1.Ingress, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type ingressNamespaceLister struct {
 }
 
 // List lists all Ingresses in the indexer for a given namespace.
-func (s ingressNamespaceLister) List(selector labels.Selector) (ret []*extensions_v1beta1.Ingress, err error) {
+func (s ingressNamespaceLister) List(selector labels.Selector) (ret []*extensionsv1beta1.Ingress, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s ingressNamespaceLister) List(selector labels.Selector) (ret []*extension
 }
 
 // Get retrieves the Ingress from the indexer for a given namespace and name.
-func (s ingressNamespaceLister) Get(name string) (*extensions_v1beta1.Ingress, error) {
+func (s ingressNamespaceLister) Get(name string) (*extensionsv1beta1.Ingress, error) {
 	return s.client.ExtensionsV1beta1().Ingresses(s.namespace).Get(name, v1.GetOptions{})
 }

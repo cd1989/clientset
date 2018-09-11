@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	certificates_v1beta1 "k8s.io/api/certificates/v1beta1"
+	certificatesv1beta1 "k8s.io/api/certificates/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredCertificateSigningRequestLister(client kubernetes.Interface, twe
 }
 
 // List lists all CertificateSigningRequests in the indexer.
-func (s *certificateSigningRequestLister) List(selector labels.Selector) (ret []*certificates_v1beta1.CertificateSigningRequest, err error) {
+func (s *certificateSigningRequestLister) List(selector labels.Selector) (ret []*certificatesv1beta1.CertificateSigningRequest, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *certificateSigningRequestLister) List(selector labels.Selector) (ret []
 }
 
 // Get retrieves the CertificateSigningRequest from the index for a given name.
-func (s *certificateSigningRequestLister) Get(name string) (*certificates_v1beta1.CertificateSigningRequest, error) {
+func (s *certificateSigningRequestLister) Get(name string) (*certificatesv1beta1.CertificateSigningRequest, error) {
 	return s.client.CertificatesV1beta1().CertificateSigningRequests().Get(name, v1.GetOptions{})
 }

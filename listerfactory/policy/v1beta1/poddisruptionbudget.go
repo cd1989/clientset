@@ -8,8 +8,8 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	policy_v1beta1 "k8s.io/api/policy/v1beta1"
+	corev1 "k8s.io/api/core/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -39,7 +39,7 @@ func NewFilteredPodDisruptionBudgetLister(client kubernetes.Interface, tweakList
 }
 
 // List lists all PodDisruptionBudgets in the indexer.
-func (s *podDisruptionBudgetLister) List(selector labels.Selector) (ret []*policy_v1beta1.PodDisruptionBudget, err error) {
+func (s *podDisruptionBudgetLister) List(selector labels.Selector) (ret []*policyv1beta1.PodDisruptionBudget, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -56,7 +56,7 @@ func (s *podDisruptionBudgetLister) List(selector labels.Selector) (ret []*polic
 	return ret, nil
 }
 
-func (s *podDisruptionBudgetLister) GetPodPodDisruptionBudgets(*core_v1.Pod) ([]*policy_v1beta1.PodDisruptionBudget, error) {
+func (s *podDisruptionBudgetLister) GetPodPodDisruptionBudgets(*corev1.Pod) ([]*policyv1beta1.PodDisruptionBudget, error) {
 	return nil, nil
 }
 
@@ -74,7 +74,7 @@ type podDisruptionBudgetNamespaceLister struct {
 }
 
 // List lists all PodDisruptionBudgets in the indexer for a given namespace.
-func (s podDisruptionBudgetNamespaceLister) List(selector labels.Selector) (ret []*policy_v1beta1.PodDisruptionBudget, err error) {
+func (s podDisruptionBudgetNamespaceLister) List(selector labels.Selector) (ret []*policyv1beta1.PodDisruptionBudget, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -92,6 +92,6 @@ func (s podDisruptionBudgetNamespaceLister) List(selector labels.Selector) (ret 
 }
 
 // Get retrieves the PodDisruptionBudget from the indexer for a given namespace and name.
-func (s podDisruptionBudgetNamespaceLister) Get(name string) (*policy_v1beta1.PodDisruptionBudget, error) {
+func (s podDisruptionBudgetNamespaceLister) Get(name string) (*policyv1beta1.PodDisruptionBudget, error) {
 	return s.client.PolicyV1beta1().PodDisruptionBudgets(s.namespace).Get(name, v1.GetOptions{})
 }

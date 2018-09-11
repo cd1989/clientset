@@ -8,9 +8,9 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta1 "k8s.io/api/apps/v1beta1"
-	core_v1 "k8s.io/api/core/v1"
-	extensions_v1beta1 "k8s.io/api/extensions/v1beta1"
+	appsv1beta1 "k8s.io/api/apps/v1beta1"
+	corev1 "k8s.io/api/core/v1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -40,7 +40,7 @@ func NewFilteredDaemonSetLister(client kubernetes.Interface, tweakListOptions in
 }
 
 // List lists all DaemonSets in the indexer.
-func (s *daemonSetLister) List(selector labels.Selector) (ret []*extensions_v1beta1.DaemonSet, err error) {
+func (s *daemonSetLister) List(selector labels.Selector) (ret []*extensionsv1beta1.DaemonSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -57,11 +57,11 @@ func (s *daemonSetLister) List(selector labels.Selector) (ret []*extensions_v1be
 	return ret, nil
 }
 
-func (s *daemonSetLister) GetHistoryDaemonSets(*apps_v1beta1.ControllerRevision) ([]*extensions_v1beta1.DaemonSet, error) {
+func (s *daemonSetLister) GetHistoryDaemonSets(*appsv1beta1.ControllerRevision) ([]*extensionsv1beta1.DaemonSet, error) {
 	return nil, nil
 }
 
-func (s *daemonSetLister) GetPodDaemonSets(*core_v1.Pod) ([]*extensions_v1beta1.DaemonSet, error) {
+func (s *daemonSetLister) GetPodDaemonSets(*corev1.Pod) ([]*extensionsv1beta1.DaemonSet, error) {
 	return nil, nil
 }
 
@@ -79,7 +79,7 @@ type daemonSetNamespaceLister struct {
 }
 
 // List lists all DaemonSets in the indexer for a given namespace.
-func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*extensions_v1beta1.DaemonSet, err error) {
+func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*extensionsv1beta1.DaemonSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -97,6 +97,6 @@ func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*extensi
 }
 
 // Get retrieves the DaemonSet from the indexer for a given namespace and name.
-func (s daemonSetNamespaceLister) Get(name string) (*extensions_v1beta1.DaemonSet, error) {
+func (s daemonSetNamespaceLister) Get(name string) (*extensionsv1beta1.DaemonSet, error) {
 	return s.client.ExtensionsV1beta1().DaemonSets(s.namespace).Get(name, v1.GetOptions{})
 }

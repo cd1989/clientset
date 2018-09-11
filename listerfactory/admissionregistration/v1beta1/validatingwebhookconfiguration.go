@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	admissionregistration_v1beta1 "k8s.io/api/admissionregistration/v1beta1"
+	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredValidatingWebhookConfigurationLister(client kubernetes.Interface
 }
 
 // List lists all ValidatingWebhookConfigurations in the indexer.
-func (s *validatingWebhookConfigurationLister) List(selector labels.Selector) (ret []*admissionregistration_v1beta1.ValidatingWebhookConfiguration, err error) {
+func (s *validatingWebhookConfigurationLister) List(selector labels.Selector) (ret []*admissionregistrationv1beta1.ValidatingWebhookConfiguration, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *validatingWebhookConfigurationLister) List(selector labels.Selector) (r
 }
 
 // Get retrieves the ValidatingWebhookConfiguration from the index for a given name.
-func (s *validatingWebhookConfigurationLister) Get(name string) (*admissionregistration_v1beta1.ValidatingWebhookConfiguration, error) {
+func (s *validatingWebhookConfigurationLister) Get(name string) (*admissionregistrationv1beta1.ValidatingWebhookConfiguration, error) {
 	return s.client.AdmissionregistrationV1beta1().ValidatingWebhookConfigurations().Get(name, v1.GetOptions{})
 }

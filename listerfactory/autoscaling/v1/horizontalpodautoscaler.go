@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	autoscaling_v1 "k8s.io/api/autoscaling/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	autoscalingv1 "k8s.io/api/autoscaling/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/autoscaling/v1"
@@ -38,14 +38,14 @@ func NewFilteredHorizontalPodAutoscalerLister(client kubernetes.Interface, tweak
 }
 
 // List lists all HorizontalPodAutoscalers in the indexer.
-func (s *horizontalPodAutoscalerLister) List(selector labels.Selector) (ret []*autoscaling_v1.HorizontalPodAutoscaler, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *horizontalPodAutoscalerLister) List(selector labels.Selector) (ret []*autoscalingv1.HorizontalPodAutoscaler, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.AutoscalingV1().HorizontalPodAutoscalers(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.AutoscalingV1().HorizontalPodAutoscalers(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type horizontalPodAutoscalerNamespaceLister struct {
 }
 
 // List lists all HorizontalPodAutoscalers in the indexer for a given namespace.
-func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (ret []*autoscaling_v1.HorizontalPodAutoscaler, err error) {
-	listopt := meta_v1.ListOptions{
+func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (ret []*autoscalingv1.HorizontalPodAutoscaler, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (
 }
 
 // Get retrieves the HorizontalPodAutoscaler from the indexer for a given namespace and name.
-func (s horizontalPodAutoscalerNamespaceLister) Get(name string) (*autoscaling_v1.HorizontalPodAutoscaler, error) {
-	return s.client.AutoscalingV1().HorizontalPodAutoscalers(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s horizontalPodAutoscalerNamespaceLister) Get(name string) (*autoscalingv1.HorizontalPodAutoscaler, error) {
+	return s.client.AutoscalingV1().HorizontalPodAutoscalers(s.namespace).Get(name, metav1.GetOptions{})
 }

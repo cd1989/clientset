@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	storage_v1 "k8s.io/api/storage/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	storagev1 "k8s.io/api/storage/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/storage/v1"
@@ -36,8 +36,8 @@ func NewFilteredStorageClassLister(client kubernetes.Interface, tweakListOptions
 }
 
 // List lists all StorageClasses in the indexer.
-func (s *storageClassLister) List(selector labels.Selector) (ret []*storage_v1.StorageClass, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *storageClassLister) List(selector labels.Selector) (ret []*storagev1.StorageClass, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -54,6 +54,6 @@ func (s *storageClassLister) List(selector labels.Selector) (ret []*storage_v1.S
 }
 
 // Get retrieves the StorageClass from the index for a given name.
-func (s *storageClassLister) Get(name string) (*storage_v1.StorageClass, error) {
-	return s.client.StorageV1().StorageClasses().Get(name, meta_v1.GetOptions{})
+func (s *storageClassLister) Get(name string) (*storagev1.StorageClass, error) {
+	return s.client.StorageV1().StorageClasses().Get(name, metav1.GetOptions{})
 }

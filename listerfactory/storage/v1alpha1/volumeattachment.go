@@ -8,7 +8,7 @@ package v1alpha1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	storage_v1alpha1 "k8s.io/api/storage/v1alpha1"
+	storagev1alpha1 "k8s.io/api/storage/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredVolumeAttachmentLister(client kubernetes.Interface, tweakListOpt
 }
 
 // List lists all VolumeAttachments in the indexer.
-func (s *volumeAttachmentLister) List(selector labels.Selector) (ret []*storage_v1alpha1.VolumeAttachment, err error) {
+func (s *volumeAttachmentLister) List(selector labels.Selector) (ret []*storagev1alpha1.VolumeAttachment, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *volumeAttachmentLister) List(selector labels.Selector) (ret []*storage_
 }
 
 // Get retrieves the VolumeAttachment from the index for a given name.
-func (s *volumeAttachmentLister) Get(name string) (*storage_v1alpha1.VolumeAttachment, error) {
+func (s *volumeAttachmentLister) Get(name string) (*storagev1alpha1.VolumeAttachment, error) {
 	return s.client.StorageV1alpha1().VolumeAttachments().Get(name, v1.GetOptions{})
 }

@@ -8,7 +8,7 @@ package v1alpha1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	admissionregistration_v1alpha1 "k8s.io/api/admissionregistration/v1alpha1"
+	admissionregistrationv1alpha1 "k8s.io/api/admissionregistration/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredInitializerConfigurationLister(client kubernetes.Interface, twea
 }
 
 // List lists all InitializerConfigurations in the indexer.
-func (s *initializerConfigurationLister) List(selector labels.Selector) (ret []*admissionregistration_v1alpha1.InitializerConfiguration, err error) {
+func (s *initializerConfigurationLister) List(selector labels.Selector) (ret []*admissionregistrationv1alpha1.InitializerConfiguration, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *initializerConfigurationLister) List(selector labels.Selector) (ret []*
 }
 
 // Get retrieves the InitializerConfiguration from the index for a given name.
-func (s *initializerConfigurationLister) Get(name string) (*admissionregistration_v1alpha1.InitializerConfiguration, error) {
+func (s *initializerConfigurationLister) Get(name string) (*admissionregistrationv1alpha1.InitializerConfiguration, error) {
 	return s.client.AdmissionregistrationV1alpha1().InitializerConfigurations().Get(name, v1.GetOptions{})
 }

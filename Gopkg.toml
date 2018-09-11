@@ -36,4 +36,6 @@
   name = "k8s.io/gengo"
   branch = "master"
 
-
+[prune]
+  go-tests = true
+  unused-packages = true

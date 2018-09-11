@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	policy_v1beta1 "k8s.io/api/policy/v1beta1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredPodSecurityPolicyLister(client kubernetes.Interface, tweakListOp
 }
 
 // List lists all PodSecurityPolicies in the indexer.
-func (s *podSecurityPolicyLister) List(selector labels.Selector) (ret []*policy_v1beta1.PodSecurityPolicy, err error) {
+func (s *podSecurityPolicyLister) List(selector labels.Selector) (ret []*policyv1beta1.PodSecurityPolicy, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *podSecurityPolicyLister) List(selector labels.Selector) (ret []*policy_
 }
 
 // Get retrieves the PodSecurityPolicy from the index for a given name.
-func (s *podSecurityPolicyLister) Get(name string) (*policy_v1beta1.PodSecurityPolicy, error) {
+func (s *podSecurityPolicyLister) Get(name string) (*policyv1beta1.PodSecurityPolicy, error) {
 	return s.client.PolicyV1beta1().PodSecurityPolicies().Get(name, v1.GetOptions{})
 }

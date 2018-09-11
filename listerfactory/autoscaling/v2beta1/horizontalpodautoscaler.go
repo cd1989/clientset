@@ -8,7 +8,7 @@ package v2beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	autoscaling_v2beta1 "k8s.io/api/autoscaling/v2beta1"
+	autoscalingv2beta1 "k8s.io/api/autoscaling/v2beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredHorizontalPodAutoscalerLister(client kubernetes.Interface, tweak
 }
 
 // List lists all HorizontalPodAutoscalers in the indexer.
-func (s *horizontalPodAutoscalerLister) List(selector labels.Selector) (ret []*autoscaling_v2beta1.HorizontalPodAutoscaler, err error) {
+func (s *horizontalPodAutoscalerLister) List(selector labels.Selector) (ret []*autoscalingv2beta1.HorizontalPodAutoscaler, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type horizontalPodAutoscalerNamespaceLister struct {
 }
 
 // List lists all HorizontalPodAutoscalers in the indexer for a given namespace.
-func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (ret []*autoscaling_v2beta1.HorizontalPodAutoscaler, err error) {
+func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (ret []*autoscalingv2beta1.HorizontalPodAutoscaler, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s horizontalPodAutoscalerNamespaceLister) List(selector labels.Selector) (
 }
 
 // Get retrieves the HorizontalPodAutoscaler from the indexer for a given namespace and name.
-func (s horizontalPodAutoscalerNamespaceLister) Get(name string) (*autoscaling_v2beta1.HorizontalPodAutoscaler, error) {
+func (s horizontalPodAutoscalerNamespaceLister) Get(name string) (*autoscalingv2beta1.HorizontalPodAutoscaler, error) {
 	return s.client.AutoscalingV2beta1().HorizontalPodAutoscalers(s.namespace).Get(name, v1.GetOptions{})
 }

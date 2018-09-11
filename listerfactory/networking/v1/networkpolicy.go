@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	networking_v1 "k8s.io/api/networking/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	networkingv1 "k8s.io/api/networking/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/networking/v1"
@@ -38,14 +38,14 @@ func NewFilteredNetworkPolicyLister(client kubernetes.Interface, tweakListOption
 }
 
 // List lists all NetworkPolicies in the indexer.
-func (s *networkPolicyLister) List(selector labels.Selector) (ret []*networking_v1.NetworkPolicy, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *networkPolicyLister) List(selector labels.Selector) (ret []*networkingv1.NetworkPolicy, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.NetworkingV1().NetworkPolicies(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.NetworkingV1().NetworkPolicies(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type networkPolicyNamespaceLister struct {
 }
 
 // List lists all NetworkPolicies in the indexer for a given namespace.
-func (s networkPolicyNamespaceLister) List(selector labels.Selector) (ret []*networking_v1.NetworkPolicy, err error) {
-	listopt := meta_v1.ListOptions{
+func (s networkPolicyNamespaceLister) List(selector labels.Selector) (ret []*networkingv1.NetworkPolicy, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s networkPolicyNamespaceLister) List(selector labels.Selector) (ret []*net
 }
 
 // Get retrieves the NetworkPolicy from the indexer for a given namespace and name.
-func (s networkPolicyNamespaceLister) Get(name string) (*networking_v1.NetworkPolicy, error) {
-	return s.client.NetworkingV1().NetworkPolicies(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s networkPolicyNamespaceLister) Get(name string) (*networkingv1.NetworkPolicy, error) {
+	return s.client.NetworkingV1().NetworkPolicies(s.namespace).Get(name, metav1.GetOptions{})
 }

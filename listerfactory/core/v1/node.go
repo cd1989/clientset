@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -36,8 +36,8 @@ func NewFilteredNodeLister(client kubernetes.Interface, tweakListOptions interna
 }
 
 // List lists all Nodes in the indexer.
-func (s *nodeLister) List(selector labels.Selector) (ret []*core_v1.Node, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *nodeLister) List(selector labels.Selector) (ret []*corev1.Node, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -53,11 +53,11 @@ func (s *nodeLister) List(selector labels.Selector) (ret []*core_v1.Node, err er
 	return ret, nil
 }
 
-func (s *nodeLister) ListWithPredicate(v1.NodeConditionPredicate) ([]*core_v1.Node, error) {
+func (s *nodeLister) ListWithPredicate(v1.NodeConditionPredicate) ([]*corev1.Node, error) {
 	return nil, nil
 }
 
 // Get retrieves the Node from the index for a given name.
-func (s *nodeLister) Get(name string) (*core_v1.Node, error) {
-	return s.client.CoreV1().Nodes().Get(name, meta_v1.GetOptions{})
+func (s *nodeLister) Get(name string) (*corev1.Node, error) {
+	return s.client.CoreV1().Nodes().Get(name, metav1.GetOptions{})
 }

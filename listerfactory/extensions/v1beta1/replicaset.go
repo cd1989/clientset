@@ -8,8 +8,8 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	extensions_v1beta1 "k8s.io/api/extensions/v1beta1"
+	corev1 "k8s.io/api/core/v1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -39,7 +39,7 @@ func NewFilteredReplicaSetLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all ReplicaSets in the indexer.
-func (s *replicaSetLister) List(selector labels.Selector) (ret []*extensions_v1beta1.ReplicaSet, err error) {
+func (s *replicaSetLister) List(selector labels.Selector) (ret []*extensionsv1beta1.ReplicaSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -56,7 +56,7 @@ func (s *replicaSetLister) List(selector labels.Selector) (ret []*extensions_v1b
 	return ret, nil
 }
 
-func (s *replicaSetLister) GetPodReplicaSets(*core_v1.Pod) ([]*extensions_v1beta1.ReplicaSet, error) {
+func (s *replicaSetLister) GetPodReplicaSets(*corev1.Pod) ([]*extensionsv1beta1.ReplicaSet, error) {
 	return nil, nil
 }
 
@@ -74,7 +74,7 @@ type replicaSetNamespaceLister struct {
 }
 
 // List lists all ReplicaSets in the indexer for a given namespace.
-func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*extensions_v1beta1.ReplicaSet, err error) {
+func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*extensionsv1beta1.ReplicaSet, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -92,6 +92,6 @@ func (s replicaSetNamespaceLister) List(selector labels.Selector) (ret []*extens
 }
 
 // Get retrieves the ReplicaSet from the indexer for a given namespace and name.
-func (s replicaSetNamespaceLister) Get(name string) (*extensions_v1beta1.ReplicaSet, error) {
+func (s replicaSetNamespaceLister) Get(name string) (*extensionsv1beta1.ReplicaSet, error) {
 	return s.client.ExtensionsV1beta1().ReplicaSets(s.namespace).Get(name, v1.GetOptions{})
 }

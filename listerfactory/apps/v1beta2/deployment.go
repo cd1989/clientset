@@ -8,7 +8,7 @@ package v1beta2
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta2 "k8s.io/api/apps/v1beta2"
+	appsv1beta2 "k8s.io/api/apps/v1beta2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredDeploymentLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all Deployments in the indexer.
-func (s *deploymentLister) List(selector labels.Selector) (ret []*apps_v1beta2.Deployment, err error) {
+func (s *deploymentLister) List(selector labels.Selector) (ret []*appsv1beta2.Deployment, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -55,7 +55,7 @@ func (s *deploymentLister) List(selector labels.Selector) (ret []*apps_v1beta2.D
 	return ret, nil
 }
 
-func (s *deploymentLister) GetDeploymentsForReplicaSet(*apps_v1beta2.ReplicaSet) ([]*apps_v1beta2.Deployment, error) {
+func (s *deploymentLister) GetDeploymentsForReplicaSet(*appsv1beta2.ReplicaSet) ([]*appsv1beta2.Deployment, error) {
 	return nil, nil
 }
 
@@ -73,7 +73,7 @@ type deploymentNamespaceLister struct {
 }
 
 // List lists all Deployments in the indexer for a given namespace.
-func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*apps_v1beta2.Deployment, err error) {
+func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*appsv1beta2.Deployment, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -91,6 +91,6 @@ func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*apps_v
 }
 
 // Get retrieves the Deployment from the indexer for a given namespace and name.
-func (s deploymentNamespaceLister) Get(name string) (*apps_v1beta2.Deployment, error) {
+func (s deploymentNamespaceLister) Get(name string) (*appsv1beta2.Deployment, error) {
 	return s.client.AppsV1beta2().Deployments(s.namespace).Get(name, v1.GetOptions{})
 }

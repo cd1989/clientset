@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1 "k8s.io/api/apps/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/apps/v1"
@@ -38,14 +38,14 @@ func NewFilteredControllerRevisionLister(client kubernetes.Interface, tweakListO
 }
 
 // List lists all ControllerRevisions in the indexer.
-func (s *controllerRevisionLister) List(selector labels.Selector) (ret []*apps_v1.ControllerRevision, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *controllerRevisionLister) List(selector labels.Selector) (ret []*appsv1.ControllerRevision, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.AppsV1().ControllerRevisions(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.AppsV1().ControllerRevisions(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type controllerRevisionNamespaceLister struct {
 }
 
 // List lists all ControllerRevisions in the indexer for a given namespace.
-func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret []*apps_v1.ControllerRevision, err error) {
-	listopt := meta_v1.ListOptions{
+func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret []*appsv1.ControllerRevision, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret [
 }
 
 // Get retrieves the ControllerRevision from the indexer for a given namespace and name.
-func (s controllerRevisionNamespaceLister) Get(name string) (*apps_v1.ControllerRevision, error) {
-	return s.client.AppsV1().ControllerRevisions(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s controllerRevisionNamespaceLister) Get(name string) (*appsv1.ControllerRevision, error) {
+	return s.client.AppsV1().ControllerRevisions(s.namespace).Get(name, metav1.GetOptions{})
 }

@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	admissionregistration_v1beta1 "k8s.io/api/admissionregistration/v1beta1"
+	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -36,7 +36,7 @@ func NewFilteredMutatingWebhookConfigurationLister(client kubernetes.Interface, 
 }
 
 // List lists all MutatingWebhookConfigurations in the indexer.
-func (s *mutatingWebhookConfigurationLister) List(selector labels.Selector) (ret []*admissionregistration_v1beta1.MutatingWebhookConfiguration, err error) {
+func (s *mutatingWebhookConfigurationLister) List(selector labels.Selector) (ret []*admissionregistrationv1beta1.MutatingWebhookConfiguration, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -54,6 +54,6 @@ func (s *mutatingWebhookConfigurationLister) List(selector labels.Selector) (ret
 }
 
 // Get retrieves the MutatingWebhookConfiguration from the index for a given name.
-func (s *mutatingWebhookConfigurationLister) Get(name string) (*admissionregistration_v1beta1.MutatingWebhookConfiguration, error) {
+func (s *mutatingWebhookConfigurationLister) Get(name string) (*admissionregistrationv1beta1.MutatingWebhookConfiguration, error) {
 	return s.client.AdmissionregistrationV1beta1().MutatingWebhookConfigurations().Get(name, v1.GetOptions{})
 }

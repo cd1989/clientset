@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -38,14 +38,14 @@ func NewFilteredReplicationControllerLister(client kubernetes.Interface, tweakLi
 }
 
 // List lists all ReplicationControllers in the indexer.
-func (s *replicationControllerLister) List(selector labels.Selector) (ret []*core_v1.ReplicationController, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *replicationControllerLister) List(selector labels.Selector) (ret []*corev1.ReplicationController, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.CoreV1().ReplicationControllers(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.CoreV1().ReplicationControllers(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (s *replicationControllerLister) List(selector labels.Selector) (ret []*cor
 	return ret, nil
 }
 
-func (s *replicationControllerLister) GetPodControllers(*core_v1.Pod) ([]*core_v1.ReplicationController, error) {
+func (s *replicationControllerLister) GetPodControllers(*corev1.Pod) ([]*corev1.ReplicationController, error) {
 	return nil, nil
 }
 
@@ -73,8 +73,8 @@ type replicationControllerNamespaceLister struct {
 }
 
 // List lists all ReplicationControllers in the indexer for a given namespace.
-func (s replicationControllerNamespaceLister) List(selector labels.Selector) (ret []*core_v1.ReplicationController, err error) {
-	listopt := meta_v1.ListOptions{
+func (s replicationControllerNamespaceLister) List(selector labels.Selector) (ret []*corev1.ReplicationController, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -91,6 +91,6 @@ func (s replicationControllerNamespaceLister) List(selector labels.Selector) (re
 }
 
 // Get retrieves the ReplicationController from the indexer for a given namespace and name.
-func (s replicationControllerNamespaceLister) Get(name string) (*core_v1.ReplicationController, error) {
-	return s.client.CoreV1().ReplicationControllers(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s replicationControllerNamespaceLister) Get(name string) (*corev1.ReplicationController, error) {
+	return s.client.CoreV1().ReplicationControllers(s.namespace).Get(name, metav1.GetOptions{})
 }

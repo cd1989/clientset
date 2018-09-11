@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -38,14 +38,14 @@ func NewFilteredConfigMapLister(client kubernetes.Interface, tweakListOptions in
 }
 
 // List lists all ConfigMaps in the indexer.
-func (s *configMapLister) List(selector labels.Selector) (ret []*core_v1.ConfigMap, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *configMapLister) List(selector labels.Selector) (ret []*corev1.ConfigMap, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.CoreV1().ConfigMaps(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.CoreV1().ConfigMaps(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type configMapNamespaceLister struct {
 }
 
 // List lists all ConfigMaps in the indexer for a given namespace.
-func (s configMapNamespaceLister) List(selector labels.Selector) (ret []*core_v1.ConfigMap, err error) {
-	listopt := meta_v1.ListOptions{
+func (s configMapNamespaceLister) List(selector labels.Selector) (ret []*corev1.ConfigMap, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s configMapNamespaceLister) List(selector labels.Selector) (ret []*core_v1
 }
 
 // Get retrieves the ConfigMap from the indexer for a given namespace and name.
-func (s configMapNamespaceLister) Get(name string) (*core_v1.ConfigMap, error) {
-	return s.client.CoreV1().ConfigMaps(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s configMapNamespaceLister) Get(name string) (*corev1.ConfigMap, error) {
+	return s.client.CoreV1().ConfigMaps(s.namespace).Get(name, metav1.GetOptions{})
 }

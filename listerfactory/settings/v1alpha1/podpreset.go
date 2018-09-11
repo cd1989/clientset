@@ -8,7 +8,7 @@ package v1alpha1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	settings_v1alpha1 "k8s.io/api/settings/v1alpha1"
+	settingsv1alpha1 "k8s.io/api/settings/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredPodPresetLister(client kubernetes.Interface, tweakListOptions in
 }
 
 // List lists all PodPresets in the indexer.
-func (s *podPresetLister) List(selector labels.Selector) (ret []*settings_v1alpha1.PodPreset, err error) {
+func (s *podPresetLister) List(selector labels.Selector) (ret []*settingsv1alpha1.PodPreset, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type podPresetNamespaceLister struct {
 }
 
 // List lists all PodPresets in the indexer for a given namespace.
-func (s podPresetNamespaceLister) List(selector labels.Selector) (ret []*settings_v1alpha1.PodPreset, err error) {
+func (s podPresetNamespaceLister) List(selector labels.Selector) (ret []*settingsv1alpha1.PodPreset, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s podPresetNamespaceLister) List(selector labels.Selector) (ret []*setting
 }
 
 // Get retrieves the PodPreset from the indexer for a given namespace and name.
-func (s podPresetNamespaceLister) Get(name string) (*settings_v1alpha1.PodPreset, error) {
+func (s podPresetNamespaceLister) Get(name string) (*settingsv1alpha1.PodPreset, error) {
 	return s.client.SettingsV1alpha1().PodPresets(s.namespace).Get(name, v1.GetOptions{})
 }

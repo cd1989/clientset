@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/core/v1"
@@ -38,14 +38,14 @@ func NewFilteredServiceAccountLister(client kubernetes.Interface, tweakListOptio
 }
 
 // List lists all ServiceAccounts in the indexer.
-func (s *serviceAccountLister) List(selector labels.Selector) (ret []*core_v1.ServiceAccount, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *serviceAccountLister) List(selector labels.Selector) (ret []*corev1.ServiceAccount, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.CoreV1().ServiceAccounts(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.CoreV1().ServiceAccounts(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type serviceAccountNamespaceLister struct {
 }
 
 // List lists all ServiceAccounts in the indexer for a given namespace.
-func (s serviceAccountNamespaceLister) List(selector labels.Selector) (ret []*core_v1.ServiceAccount, err error) {
-	listopt := meta_v1.ListOptions{
+func (s serviceAccountNamespaceLister) List(selector labels.Selector) (ret []*corev1.ServiceAccount, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s serviceAccountNamespaceLister) List(selector labels.Selector) (ret []*co
 }
 
 // Get retrieves the ServiceAccount from the indexer for a given namespace and name.
-func (s serviceAccountNamespaceLister) Get(name string) (*core_v1.ServiceAccount, error) {
-	return s.client.CoreV1().ServiceAccounts(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s serviceAccountNamespaceLister) Get(name string) (*corev1.ServiceAccount, error) {
+	return s.client.CoreV1().ServiceAccounts(s.namespace).Get(name, metav1.GetOptions{})
 }

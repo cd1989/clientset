@@ -8,8 +8,8 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	rbac_v1 "k8s.io/api/rbac/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/rbac/v1"
@@ -38,14 +38,14 @@ func NewFilteredRoleLister(client kubernetes.Interface, tweakListOptions interna
 }
 
 // List lists all Roles in the indexer.
-func (s *roleLister) List(selector labels.Selector) (ret []*rbac_v1.Role, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *roleLister) List(selector labels.Selector) (ret []*rbacv1.Role, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.RbacV1().Roles(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.RbacV1().Roles(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ type roleNamespaceLister struct {
 }
 
 // List lists all Roles in the indexer for a given namespace.
-func (s roleNamespaceLister) List(selector labels.Selector) (ret []*rbac_v1.Role, err error) {
-	listopt := meta_v1.ListOptions{
+func (s roleNamespaceLister) List(selector labels.Selector) (ret []*rbacv1.Role, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -87,6 +87,6 @@ func (s roleNamespaceLister) List(selector labels.Selector) (ret []*rbac_v1.Role
 }
 
 // Get retrieves the Role from the indexer for a given namespace and name.
-func (s roleNamespaceLister) Get(name string) (*rbac_v1.Role, error) {
-	return s.client.RbacV1().Roles(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s roleNamespaceLister) Get(name string) (*rbacv1.Role, error) {
+	return s.client.RbacV1().Roles(s.namespace).Get(name, metav1.GetOptions{})
 }

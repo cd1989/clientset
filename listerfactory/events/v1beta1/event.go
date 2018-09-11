@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	events_v1beta1 "k8s.io/api/events/v1beta1"
+	eventsv1beta1 "k8s.io/api/events/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredEventLister(client kubernetes.Interface, tweakListOptions intern
 }
 
 // List lists all Events in the indexer.
-func (s *eventLister) List(selector labels.Selector) (ret []*events_v1beta1.Event, err error) {
+func (s *eventLister) List(selector labels.Selector) (ret []*eventsv1beta1.Event, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type eventNamespaceLister struct {
 }
 
 // List lists all Events in the indexer for a given namespace.
-func (s eventNamespaceLister) List(selector labels.Selector) (ret []*events_v1beta1.Event, err error) {
+func (s eventNamespaceLister) List(selector labels.Selector) (ret []*eventsv1beta1.Event, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s eventNamespaceLister) List(selector labels.Selector) (ret []*events_v1be
 }
 
 // Get retrieves the Event from the indexer for a given namespace and name.
-func (s eventNamespaceLister) Get(name string) (*events_v1beta1.Event, error) {
+func (s eventNamespaceLister) Get(name string) (*eventsv1beta1.Event, error) {
 	return s.client.EventsV1beta1().Events(s.namespace).Get(name, v1.GetOptions{})
 }

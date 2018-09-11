@@ -8,7 +8,7 @@ package v1beta2
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1beta2 "k8s.io/api/apps/v1beta2"
+	appsv1beta2 "k8s.io/api/apps/v1beta2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredControllerRevisionLister(client kubernetes.Interface, tweakListO
 }
 
 // List lists all ControllerRevisions in the indexer.
-func (s *controllerRevisionLister) List(selector labels.Selector) (ret []*apps_v1beta2.ControllerRevision, err error) {
+func (s *controllerRevisionLister) List(selector labels.Selector) (ret []*appsv1beta2.ControllerRevision, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type controllerRevisionNamespaceLister struct {
 }
 
 // List lists all ControllerRevisions in the indexer for a given namespace.
-func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret []*apps_v1beta2.ControllerRevision, err error) {
+func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret []*appsv1beta2.ControllerRevision, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s controllerRevisionNamespaceLister) List(selector labels.Selector) (ret [
 }
 
 // Get retrieves the ControllerRevision from the indexer for a given namespace and name.
-func (s controllerRevisionNamespaceLister) Get(name string) (*apps_v1beta2.ControllerRevision, error) {
+func (s controllerRevisionNamespaceLister) Get(name string) (*appsv1beta2.ControllerRevision, error) {
 	return s.client.AppsV1beta2().ControllerRevisions(s.namespace).Get(name, v1.GetOptions{})
 }

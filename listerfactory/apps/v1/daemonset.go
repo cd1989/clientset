@@ -8,9 +8,9 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	apps_v1 "k8s.io/api/apps/v1"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/apps/v1"
@@ -39,14 +39,14 @@ func NewFilteredDaemonSetLister(client kubernetes.Interface, tweakListOptions in
 }
 
 // List lists all DaemonSets in the indexer.
-func (s *daemonSetLister) List(selector labels.Selector) (ret []*apps_v1.DaemonSet, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *daemonSetLister) List(selector labels.Selector) (ret []*appsv1.DaemonSet, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.AppsV1().DaemonSets(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.AppsV1().DaemonSets(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -56,11 +56,11 @@ func (s *daemonSetLister) List(selector labels.Selector) (ret []*apps_v1.DaemonS
 	return ret, nil
 }
 
-func (s *daemonSetLister) GetHistoryDaemonSets(*apps_v1.ControllerRevision) ([]*apps_v1.DaemonSet, error) {
+func (s *daemonSetLister) GetHistoryDaemonSets(*appsv1.ControllerRevision) ([]*appsv1.DaemonSet, error) {
 	return nil, nil
 }
 
-func (s *daemonSetLister) GetPodDaemonSets(*core_v1.Pod) ([]*apps_v1.DaemonSet, error) {
+func (s *daemonSetLister) GetPodDaemonSets(*corev1.Pod) ([]*appsv1.DaemonSet, error) {
 	return nil, nil
 }
 
@@ -78,8 +78,8 @@ type daemonSetNamespaceLister struct {
 }
 
 // List lists all DaemonSets in the indexer for a given namespace.
-func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1.DaemonSet, err error) {
-	listopt := meta_v1.ListOptions{
+func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*appsv1.DaemonSet, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -96,6 +96,6 @@ func (s daemonSetNamespaceLister) List(selector labels.Selector) (ret []*apps_v1
 }
 
 // Get retrieves the DaemonSet from the indexer for a given namespace and name.
-func (s daemonSetNamespaceLister) Get(name string) (*apps_v1.DaemonSet, error) {
-	return s.client.AppsV1().DaemonSets(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s daemonSetNamespaceLister) Get(name string) (*appsv1.DaemonSet, error) {
+	return s.client.AppsV1().DaemonSets(s.namespace).Get(name, metav1.GetOptions{})
 }

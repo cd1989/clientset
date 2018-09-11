@@ -8,9 +8,9 @@ package v1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	batch_v1 "k8s.io/api/batch/v1"
-	core_v1 "k8s.io/api/core/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
 	v1 "k8s.io/client-go/listers/batch/v1"
@@ -39,14 +39,14 @@ func NewFilteredJobLister(client kubernetes.Interface, tweakListOptions internal
 }
 
 // List lists all Jobs in the indexer.
-func (s *jobLister) List(selector labels.Selector) (ret []*batch_v1.Job, err error) {
-	listopt := meta_v1.ListOptions{
+func (s *jobLister) List(selector labels.Selector) (ret []*batchv1.Job, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
 		s.tweakListOptions(&listopt)
 	}
-	list, err := s.client.BatchV1().Jobs(meta_v1.NamespaceAll).List(listopt)
+	list, err := s.client.BatchV1().Jobs(metav1.NamespaceAll).List(listopt)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (s *jobLister) List(selector labels.Selector) (ret []*batch_v1.Job, err err
 	return ret, nil
 }
 
-func (s *jobLister) GetPodJobs(*core_v1.Pod) ([]batch_v1.Job, error) {
+func (s *jobLister) GetPodJobs(*corev1.Pod) ([]batchv1.Job, error) {
 	return nil, nil
 }
 
@@ -74,8 +74,8 @@ type jobNamespaceLister struct {
 }
 
 // List lists all Jobs in the indexer for a given namespace.
-func (s jobNamespaceLister) List(selector labels.Selector) (ret []*batch_v1.Job, err error) {
-	listopt := meta_v1.ListOptions{
+func (s jobNamespaceLister) List(selector labels.Selector) (ret []*batchv1.Job, err error) {
+	listopt := metav1.ListOptions{
 		LabelSelector: selector.String(),
 	}
 	if s.tweakListOptions != nil {
@@ -92,6 +92,6 @@ func (s jobNamespaceLister) List(selector labels.Selector) (ret []*batch_v1.Job,
 }
 
 // Get retrieves the Job from the indexer for a given namespace and name.
-func (s jobNamespaceLister) Get(name string) (*batch_v1.Job, error) {
-	return s.client.BatchV1().Jobs(s.namespace).Get(name, meta_v1.GetOptions{})
+func (s jobNamespaceLister) Get(name string) (*batchv1.Job, error) {
+	return s.client.BatchV1().Jobs(s.namespace).Get(name, metav1.GetOptions{})
 }

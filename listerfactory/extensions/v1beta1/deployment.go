@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	extensions_v1beta1 "k8s.io/api/extensions/v1beta1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredDeploymentLister(client kubernetes.Interface, tweakListOptions i
 }
 
 // List lists all Deployments in the indexer.
-func (s *deploymentLister) List(selector labels.Selector) (ret []*extensions_v1beta1.Deployment, err error) {
+func (s *deploymentLister) List(selector labels.Selector) (ret []*extensionsv1beta1.Deployment, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -55,7 +55,7 @@ func (s *deploymentLister) List(selector labels.Selector) (ret []*extensions_v1b
 	return ret, nil
 }
 
-func (s *deploymentLister) GetDeploymentsForReplicaSet(*extensions_v1beta1.ReplicaSet) ([]*extensions_v1beta1.Deployment, error) {
+func (s *deploymentLister) GetDeploymentsForReplicaSet(*extensionsv1beta1.ReplicaSet) ([]*extensionsv1beta1.Deployment, error) {
 	return nil, nil
 }
 
@@ -73,7 +73,7 @@ type deploymentNamespaceLister struct {
 }
 
 // List lists all Deployments in the indexer for a given namespace.
-func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*extensions_v1beta1.Deployment, err error) {
+func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*extensionsv1beta1.Deployment, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -91,6 +91,6 @@ func (s deploymentNamespaceLister) List(selector labels.Selector) (ret []*extens
 }
 
 // Get retrieves the Deployment from the indexer for a given namespace and name.
-func (s deploymentNamespaceLister) Get(name string) (*extensions_v1beta1.Deployment, error) {
+func (s deploymentNamespaceLister) Get(name string) (*extensionsv1beta1.Deployment, error) {
 	return s.client.ExtensionsV1beta1().Deployments(s.namespace).Get(name, v1.GetOptions{})
 }

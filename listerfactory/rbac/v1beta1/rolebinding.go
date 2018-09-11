@@ -8,7 +8,7 @@ package v1beta1
 
 import (
 	internalinterfaces "github.com/caicloud/clientset/listerfactory/internalinterfaces"
-	rbac_v1beta1 "k8s.io/api/rbac/v1beta1"
+	rbacv1beta1 "k8s.io/api/rbac/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	kubernetes "k8s.io/client-go/kubernetes"
@@ -38,7 +38,7 @@ func NewFilteredRoleBindingLister(client kubernetes.Interface, tweakListOptions 
 }
 
 // List lists all RoleBindings in the indexer.
-func (s *roleBindingLister) List(selector labels.Selector) (ret []*rbac_v1beta1.RoleBinding, err error) {
+func (s *roleBindingLister) List(selector labels.Selector) (ret []*rbacv1beta1.RoleBinding, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -69,7 +69,7 @@ type roleBindingNamespaceLister struct {
 }
 
 // List lists all RoleBindings in the indexer for a given namespace.
-func (s roleBindingNamespaceLister) List(selector labels.Selector) (ret []*rbac_v1beta1.RoleBinding, err error) {
+func (s roleBindingNamespaceLister) List(selector labels.Selector) (ret []*rbacv1beta1.RoleBinding, err error) {
 	listopt := v1.ListOptions{
 		LabelSelector: selector.String(),
 	}
@@ -87,6 +87,6 @@ func (s roleBindingNamespaceLister) List(selector labels.Selector) (ret []*rbac_
 }
 
 // Get retrieves the RoleBinding from the indexer for a given namespace and name.
-func (s roleBindingNamespaceLister) Get(name string) (*rbac_v1beta1.RoleBinding, error) {
+func (s roleBindingNamespaceLister) Get(name string) (*rbacv1beta1.RoleBinding, error) {
 	return s.client.RbacV1beta1().RoleBindings(s.namespace).Get(name, v1.GetOptions{})
 }
