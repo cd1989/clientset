@@ -11,7 +11,7 @@ import (
 	v1 "github.com/caicloud/clientset/pkg/apis/apiregistration/v1"
 	v1alpha1 "github.com/caicloud/clientset/pkg/apis/cnetworking/v1alpha1"
 	configv1alpha1 "github.com/caicloud/clientset/pkg/apis/config/v1alpha1"
-	devops_v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
+	devopsv1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
 	v1alpha2 "github.com/caicloud/clientset/pkg/apis/loadbalance/v1alpha2"
 	releasev1alpha1 "github.com/caicloud/clientset/pkg/apis/release/v1alpha1"
 	resourcev1alpha1 "github.com/caicloud/clientset/pkg/apis/resource/v1alpha1"
@@ -60,7 +60,7 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Config().V1alpha1().ConfigReferences().Informer()}, nil
 
 		// Group=devops.caicloud.io, Version=v1
-	case devops_v1.SchemeGroupVersion.WithResource("cargos"):
+	case devopsv1.SchemeGroupVersion.WithResource("cargos"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Devops().V1().Cargos().Informer()}, nil
 
 		// Group=loadbalance.caicloud.io, Version=v1alpha2

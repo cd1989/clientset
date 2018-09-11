@@ -11,12 +11,12 @@ import (
 
 	kubernetes "github.com/caicloud/clientset/kubernetes"
 	v1 "github.com/caicloud/clientset/listers/devops/v1"
-	devops_v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	devopsv1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	internalinterfaces "k8s.io/client-go/informers/internalinterfaces"
-	client_go_kubernetes "k8s.io/client-go/kubernetes"
+	clientgokubernetes "k8s.io/client-go/kubernetes"
 	cache "k8s.io/client-go/tools/cache"
 )
 
@@ -46,31 +46,31 @@ func NewCargoInformer(client kubernetes.Interface, namespace string, resyncPerio
 func NewFilteredCargoInformer(client kubernetes.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
-			ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
+			ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
 				return client.DevopsV1().Cargos(namespace).List(options)
 			},
-			WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
+			WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
 				return client.DevopsV1().Cargos(namespace).Watch(options)
 			},
 		},
-		&devops_v1.Cargo{},
+		&devopsv1.Cargo{},
 		resyncPeriod,
 		indexers,
 	)
 }
 
-func (f *cargoInformer) defaultInformer(client client_go_kubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+func (f *cargoInformer) defaultInformer(client clientgokubernetes.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
 	return NewFilteredCargoInformer(client.(kubernetes.Interface), f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
 func (f *cargoInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&devops_v1.Cargo{}, f.defaultInformer)
+	return f.factory.InformerFor(&devopsv1.Cargo{}, f.defaultInformer)
 }
 
 func (f *cargoInformer) Lister() v1.CargoLister {
