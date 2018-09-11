@@ -12,6 +12,8 @@ import (
 	fakeapiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1/fake"
 	apiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1"
 	fakeapiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1/fake"
+	resourcev1 "github.com/caicloud/clientset/kubernetes/typed/cargo/v1"
+	fakeresourcev1 "github.com/caicloud/clientset/kubernetes/typed/cargo/v1/fake"
 	cnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1"
 	fakecnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1/fake"
 	configv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1"
@@ -93,6 +95,16 @@ func (c *Clientset) ApiregistrationV1() apiregistrationv1.ApiregistrationV1Inter
 // Apiregistration retrieves the ApiregistrationV1Client
 func (c *Clientset) Apiregistration() apiregistrationv1.ApiregistrationV1Interface {
 	return &fakeapiregistrationv1.FakeApiregistrationV1{Fake: &c.Fake}
+}
+
+// ResourceV1 retrieves the ResourceV1Client
+func (c *Clientset) ResourceV1() resourcev1.ResourceV1Interface {
+	return &fakeresourcev1.FakeResourceV1{Fake: &c.Fake}
+}
+
+// Resource retrieves the ResourceV1Client
+func (c *Clientset) Resource() resourcev1.ResourceV1Interface {
+	return &fakeresourcev1.FakeResourceV1{Fake: &c.Fake}
 }
 
 // CnetworkingV1alpha1 retrieves the CnetworkingV1alpha1Client

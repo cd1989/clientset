@@ -9,6 +9,7 @@ package informers
 import (
 	v1beta1 "github.com/caicloud/clientset/pkg/apis/apiextensions/v1beta1"
 	v1 "github.com/caicloud/clientset/pkg/apis/apiregistration/v1"
+	cargo_v1 "github.com/caicloud/clientset/pkg/apis/cargo/v1"
 	v1alpha1 "github.com/caicloud/clientset/pkg/apis/cnetworking/v1alpha1"
 	configv1alpha1 "github.com/caicloud/clientset/pkg/apis/config/v1alpha1"
 	v1alpha2 "github.com/caicloud/clientset/pkg/apis/loadbalance/v1alpha2"
@@ -89,6 +90,10 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Resource().V1beta1().StorageTypes().Informer()}, nil
 	case resourcev1beta1.SchemeGroupVersion.WithResource("tags"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Resource().V1beta1().Tags().Informer()}, nil
+
+		// Group=resource.caicloud.io, Version=v1
+	case cargo_v1.SchemeGroupVersion.WithResource("cargos"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Resource().V1().Cargos().Informer()}, nil
 
 		// Group=tenant.caicloud.io, Version=v1alpha1
 	case tenantv1alpha1.SchemeGroupVersion.WithResource("clusterquotas"):

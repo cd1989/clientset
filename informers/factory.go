@@ -11,6 +11,7 @@ import (
 
 	apiextensions "github.com/caicloud/clientset/informers/apiextensions"
 	apiregistration "github.com/caicloud/clientset/informers/apiregistration"
+	cargo "github.com/caicloud/clientset/informers/cargo"
 	cnetworking "github.com/caicloud/clientset/informers/cnetworking"
 	config "github.com/caicloud/clientset/informers/config"
 	loadbalance "github.com/caicloud/clientset/informers/loadbalance"
@@ -83,6 +84,7 @@ type SharedInformerFactory interface {
 
 	Apiextensions() apiextensions.Interface
 	Apiregistration() apiregistration.Interface
+	Resource() cargo.Interface
 	Cnetworking() cnetworking.Interface
 	Config() config.Interface
 	Loadbalance() loadbalance.Interface
@@ -97,6 +99,10 @@ func (f *sharedInformerFactory) Apiextensions() apiextensions.Interface {
 
 func (f *sharedInformerFactory) Apiregistration() apiregistration.Interface {
 	return apiregistration.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Resource() cargo.Interface {
+	return cargo.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Cnetworking() cnetworking.Interface {

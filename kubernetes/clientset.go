@@ -9,6 +9,7 @@ package kubernetes
 import (
 	apiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1"
 	apiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1"
+	resourcev1 "github.com/caicloud/clientset/kubernetes/typed/cargo/v1"
 	cnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1"
 	configv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1"
 	loadbalancev1alpha2 "github.com/caicloud/clientset/kubernetes/typed/loadbalance/v1alpha2"
@@ -29,6 +30,9 @@ type Interface interface {
 	ApiregistrationV1() apiregistrationv1.ApiregistrationV1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Apiregistration() apiregistrationv1.ApiregistrationV1Interface
+	ResourceV1() resourcev1.ResourceV1Interface
+	// Deprecated: please explicitly pick a version if possible.
+	Resource() resourcev1.ResourceV1Interface
 	CnetworkingV1alpha1() cnetworkingv1alpha1.CnetworkingV1alpha1Interface
 	// Deprecated: please explicitly pick a version if possible.
 	Cnetworking() cnetworkingv1alpha1.CnetworkingV1alpha1Interface
@@ -56,6 +60,7 @@ type Clientset struct {
 	*kubernetes.Clientset
 	apiextensionsV1beta1 *apiextensionsv1beta1.ApiextensionsV1beta1Client
 	apiregistrationV1    *apiregistrationv1.ApiregistrationV1Client
+	resourceV1           *resourcev1.ResourceV1Client
 	cnetworkingV1alpha1  *cnetworkingv1alpha1.CnetworkingV1alpha1Client
 	configV1alpha1       *configv1alpha1.ConfigV1alpha1Client
 	loadbalanceV1alpha2  *loadbalancev1alpha2.LoadbalanceV1alpha2Client
@@ -85,6 +90,17 @@ func (c *Clientset) ApiregistrationV1() apiregistrationv1.ApiregistrationV1Inter
 // Please explicitly pick a version.
 func (c *Clientset) Apiregistration() apiregistrationv1.ApiregistrationV1Interface {
 	return c.apiregistrationV1
+}
+
+// ResourceV1 retrieves the ResourceV1Client
+func (c *Clientset) ResourceV1() resourcev1.ResourceV1Interface {
+	return c.resourceV1
+}
+
+// Deprecated: Resource retrieves the default version of ResourceClient.
+// Please explicitly pick a version.
+func (c *Clientset) Resource() resourcev1.ResourceV1Interface {
+	return c.resourceV1
 }
 
 // CnetworkingV1alpha1 retrieves the CnetworkingV1alpha1Client
@@ -174,6 +190,10 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
+	cs.resourceV1, err = resourcev1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
 	cs.cnetworkingV1alpha1, err = cnetworkingv1alpha1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
@@ -216,6 +236,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
 	cs.apiextensionsV1beta1 = apiextensionsv1beta1.NewForConfigOrDie(c)
 	cs.apiregistrationV1 = apiregistrationv1.NewForConfigOrDie(c)
+	cs.resourceV1 = resourcev1.NewForConfigOrDie(c)
 	cs.cnetworkingV1alpha1 = cnetworkingv1alpha1.NewForConfigOrDie(c)
 	cs.configV1alpha1 = configv1alpha1.NewForConfigOrDie(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.NewForConfigOrDie(c)
@@ -233,6 +254,7 @@ func New(c rest.Interface) *Clientset {
 	var cs Clientset
 	cs.apiextensionsV1beta1 = apiextensionsv1beta1.New(c)
 	cs.apiregistrationV1 = apiregistrationv1.New(c)
+	cs.resourceV1 = resourcev1.New(c)
 	cs.cnetworkingV1alpha1 = cnetworkingv1alpha1.New(c)
 	cs.configV1alpha1 = configv1alpha1.New(c)
 	cs.loadbalanceV1alpha2 = loadbalancev1alpha2.New(c)
