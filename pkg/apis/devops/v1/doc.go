@@ -1,4 +1,4 @@
 // +k8s:deepcopy-gen=package
-// +groupName=resource.caicloud.io
+// +groupName=devops.caicloud.io
 
 package v1

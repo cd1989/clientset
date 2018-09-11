@@ -7,7 +7,7 @@ Copyright 2018 caicloud authors. All rights reserved.
 package fake
 
 import (
-	cargo_v1 "github.com/caicloud/clientset/pkg/apis/cargo/v1"
+	devops_v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -18,29 +18,29 @@ import (
 
 // FakeCargos implements CargoInterface
 type FakeCargos struct {
-	Fake *FakeResourceV1
+	Fake *FakeDevopsV1
 	ns   string
 }
 
-var cargosResource = schema.GroupVersionResource{Group: "resource.caicloud.io", Version: "v1", Resource: "cargos"}
+var cargosResource = schema.GroupVersionResource{Group: "devops.caicloud.io", Version: "v1", Resource: "cargos"}
 
-var cargosKind = schema.GroupVersionKind{Group: "resource.caicloud.io", Version: "v1", Kind: "Cargo"}
+var cargosKind = schema.GroupVersionKind{Group: "devops.caicloud.io", Version: "v1", Kind: "Cargo"}
 
 // Get takes name of the cargo, and returns the corresponding cargo object, and an error if there is any.
-func (c *FakeCargos) Get(name string, options v1.GetOptions) (result *cargo_v1.Cargo, err error) {
+func (c *FakeCargos) Get(name string, options v1.GetOptions) (result *devops_v1.Cargo, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(cargosResource, c.ns, name), &cargo_v1.Cargo{})
+		Invokes(testing.NewGetAction(cargosResource, c.ns, name), &devops_v1.Cargo{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cargo_v1.Cargo), err
+	return obj.(*devops_v1.Cargo), err
 }
 
 // List takes label and field selectors, and returns the list of Cargos that match those selectors.
-func (c *FakeCargos) List(opts v1.ListOptions) (result *cargo_v1.CargoList, err error) {
+func (c *FakeCargos) List(opts v1.ListOptions) (result *devops_v1.CargoList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(cargosResource, cargosKind, c.ns, opts), &cargo_v1.CargoList{})
+		Invokes(testing.NewListAction(cargosResource, cargosKind, c.ns, opts), &devops_v1.CargoList{})
 
 	if obj == nil {
 		return nil, err
@@ -50,8 +50,8 @@ func (c *FakeCargos) List(opts v1.ListOptions) (result *cargo_v1.CargoList, err 
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &cargo_v1.CargoList{}
-	for _, item := range obj.(*cargo_v1.CargoList).Items {
+	list := &devops_v1.CargoList{}
+	for _, item := range obj.(*devops_v1.CargoList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)
 		}
@@ -67,31 +67,31 @@ func (c *FakeCargos) Watch(opts v1.ListOptions) (watch.Interface, error) {
 }
 
 // Create takes the representation of a cargo and creates it.  Returns the server's representation of the cargo, and an error, if there is any.
-func (c *FakeCargos) Create(cargo *cargo_v1.Cargo) (result *cargo_v1.Cargo, err error) {
+func (c *FakeCargos) Create(cargo *devops_v1.Cargo) (result *devops_v1.Cargo, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(cargosResource, c.ns, cargo), &cargo_v1.Cargo{})
+		Invokes(testing.NewCreateAction(cargosResource, c.ns, cargo), &devops_v1.Cargo{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cargo_v1.Cargo), err
+	return obj.(*devops_v1.Cargo), err
 }
 
 // Update takes the representation of a cargo and updates it. Returns the server's representation of the cargo, and an error, if there is any.
-func (c *FakeCargos) Update(cargo *cargo_v1.Cargo) (result *cargo_v1.Cargo, err error) {
+func (c *FakeCargos) Update(cargo *devops_v1.Cargo) (result *devops_v1.Cargo, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(cargosResource, c.ns, cargo), &cargo_v1.Cargo{})
+		Invokes(testing.NewUpdateAction(cargosResource, c.ns, cargo), &devops_v1.Cargo{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cargo_v1.Cargo), err
+	return obj.(*devops_v1.Cargo), err
 }
 
 // Delete takes name of the cargo and deletes it. Returns an error if one occurs.
 func (c *FakeCargos) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteAction(cargosResource, c.ns, name), &cargo_v1.Cargo{})
+		Invokes(testing.NewDeleteAction(cargosResource, c.ns, name), &devops_v1.Cargo{})
 
 	return err
 }
@@ -100,17 +100,17 @@ func (c *FakeCargos) Delete(name string, options *v1.DeleteOptions) error {
 func (c *FakeCargos) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	action := testing.NewDeleteCollectionAction(cargosResource, c.ns, listOptions)
 
-	_, err := c.Fake.Invokes(action, &cargo_v1.CargoList{})
+	_, err := c.Fake.Invokes(action, &devops_v1.CargoList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched cargo.
-func (c *FakeCargos) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *cargo_v1.Cargo, err error) {
+func (c *FakeCargos) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *devops_v1.Cargo, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(cargosResource, c.ns, name, data, subresources...), &cargo_v1.Cargo{})
+		Invokes(testing.NewPatchSubresourceAction(cargosResource, c.ns, name, data, subresources...), &devops_v1.Cargo{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cargo_v1.Cargo), err
+	return obj.(*devops_v1.Cargo), err
 }

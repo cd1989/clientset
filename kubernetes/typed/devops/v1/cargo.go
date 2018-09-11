@@ -8,7 +8,7 @@ package v1
 
 import (
 	scheme "github.com/caicloud/clientset/kubernetes/scheme"
-	v1 "github.com/caicloud/clientset/pkg/apis/cargo/v1"
+	v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -41,7 +41,7 @@ type cargos struct {
 }
 
 // newCargos returns a Cargos
-func newCargos(c *ResourceV1Client, namespace string) *cargos {
+func newCargos(c *DevopsV1Client, namespace string) *cargos {
 	return &cargos{
 		client: c.RESTClient(),
 		ns:     namespace,

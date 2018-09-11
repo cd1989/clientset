@@ -8,27 +8,27 @@ package v1
 
 import (
 	"github.com/caicloud/clientset/kubernetes/scheme"
-	v1 "github.com/caicloud/clientset/pkg/apis/cargo/v1"
+	v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )
 
-type ResourceV1Interface interface {
+type DevopsV1Interface interface {
 	RESTClient() rest.Interface
 	CargosGetter
 }
 
-// ResourceV1Client is used to interact with features provided by the resource.caicloud.io group.
-type ResourceV1Client struct {
+// DevopsV1Client is used to interact with features provided by the devops.caicloud.io group.
+type DevopsV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *ResourceV1Client) Cargos(namespace string) CargoInterface {
+func (c *DevopsV1Client) Cargos(namespace string) CargoInterface {
 	return newCargos(c, namespace)
 }
 
-// NewForConfig creates a new ResourceV1Client for the given config.
-func NewForConfig(c *rest.Config) (*ResourceV1Client, error) {
+// NewForConfig creates a new DevopsV1Client for the given config.
+func NewForConfig(c *rest.Config) (*DevopsV1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -37,12 +37,12 @@ func NewForConfig(c *rest.Config) (*ResourceV1Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ResourceV1Client{client}, nil
+	return &DevopsV1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new ResourceV1Client for the given config and
+// NewForConfigOrDie creates a new DevopsV1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *ResourceV1Client {
+func NewForConfigOrDie(c *rest.Config) *DevopsV1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -50,9 +50,9 @@ func NewForConfigOrDie(c *rest.Config) *ResourceV1Client {
 	return client
 }
 
-// New creates a new ResourceV1Client for the given RESTClient.
-func New(c rest.Interface) *ResourceV1Client {
-	return &ResourceV1Client{c}
+// New creates a new DevopsV1Client for the given RESTClient.
+func New(c rest.Interface) *DevopsV1Client {
+	return &DevopsV1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -70,7 +70,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *ResourceV1Client) RESTClient() rest.Interface {
+func (c *DevopsV1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}

@@ -12,12 +12,12 @@ import (
 	fakeapiextensionsv1beta1 "github.com/caicloud/clientset/kubernetes/typed/apiextensions/v1beta1/fake"
 	apiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1"
 	fakeapiregistrationv1 "github.com/caicloud/clientset/kubernetes/typed/apiregistration/v1/fake"
-	resourcev1 "github.com/caicloud/clientset/kubernetes/typed/cargo/v1"
-	fakeresourcev1 "github.com/caicloud/clientset/kubernetes/typed/cargo/v1/fake"
 	cnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1"
 	fakecnetworkingv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/cnetworking/v1alpha1/fake"
 	configv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1"
 	fakeconfigv1alpha1 "github.com/caicloud/clientset/kubernetes/typed/config/v1alpha1/fake"
+	devopsv1 "github.com/caicloud/clientset/kubernetes/typed/devops/v1"
+	fakedevopsv1 "github.com/caicloud/clientset/kubernetes/typed/devops/v1/fake"
 	loadbalancev1alpha2 "github.com/caicloud/clientset/kubernetes/typed/loadbalance/v1alpha2"
 	fakeloadbalancev1alpha2 "github.com/caicloud/clientset/kubernetes/typed/loadbalance/v1alpha2/fake"
 	releasev1alpha1 "github.com/caicloud/clientset/kubernetes/typed/release/v1alpha1"
@@ -97,16 +97,6 @@ func (c *Clientset) Apiregistration() apiregistrationv1.ApiregistrationV1Interfa
 	return &fakeapiregistrationv1.FakeApiregistrationV1{Fake: &c.Fake}
 }
 
-// ResourceV1 retrieves the ResourceV1Client
-func (c *Clientset) ResourceV1() resourcev1.ResourceV1Interface {
-	return &fakeresourcev1.FakeResourceV1{Fake: &c.Fake}
-}
-
-// Resource retrieves the ResourceV1Client
-func (c *Clientset) Resource() resourcev1.ResourceV1Interface {
-	return &fakeresourcev1.FakeResourceV1{Fake: &c.Fake}
-}
-
 // CnetworkingV1alpha1 retrieves the CnetworkingV1alpha1Client
 func (c *Clientset) CnetworkingV1alpha1() cnetworkingv1alpha1.CnetworkingV1alpha1Interface {
 	return &fakecnetworkingv1alpha1.FakeCnetworkingV1alpha1{Fake: &c.Fake}
@@ -125,6 +115,16 @@ func (c *Clientset) ConfigV1alpha1() configv1alpha1.ConfigV1alpha1Interface {
 // Config retrieves the ConfigV1alpha1Client
 func (c *Clientset) Config() configv1alpha1.ConfigV1alpha1Interface {
 	return &fakeconfigv1alpha1.FakeConfigV1alpha1{Fake: &c.Fake}
+}
+
+// DevopsV1 retrieves the DevopsV1Client
+func (c *Clientset) DevopsV1() devopsv1.DevopsV1Interface {
+	return &fakedevopsv1.FakeDevopsV1{Fake: &c.Fake}
+}
+
+// Devops retrieves the DevopsV1Client
+func (c *Clientset) Devops() devopsv1.DevopsV1Interface {
+	return &fakedevopsv1.FakeDevopsV1{Fake: &c.Fake}
 }
 
 // LoadbalanceV1alpha2 retrieves the LoadbalanceV1alpha2Client

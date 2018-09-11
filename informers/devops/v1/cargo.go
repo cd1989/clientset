@@ -10,8 +10,8 @@ import (
 	time "time"
 
 	kubernetes "github.com/caicloud/clientset/kubernetes"
-	v1 "github.com/caicloud/clientset/listers/cargo/v1"
-	cargo_v1 "github.com/caicloud/clientset/pkg/apis/cargo/v1"
+	v1 "github.com/caicloud/clientset/listers/devops/v1"
+	devops_v1 "github.com/caicloud/clientset/pkg/apis/devops/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -50,16 +50,16 @@ func NewFilteredCargoInformer(client kubernetes.Interface, namespace string, res
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ResourceV1().Cargos(namespace).List(options)
+				return client.DevopsV1().Cargos(namespace).List(options)
 			},
 			WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.ResourceV1().Cargos(namespace).Watch(options)
+				return client.DevopsV1().Cargos(namespace).Watch(options)
 			},
 		},
-		&cargo_v1.Cargo{},
+		&devops_v1.Cargo{},
 		resyncPeriod,
 		indexers,
 	)
@@ -70,7 +70,7 @@ func (f *cargoInformer) defaultInformer(client client_go_kubernetes.Interface, r
 }
 
 func (f *cargoInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&cargo_v1.Cargo{}, f.defaultInformer)
+	return f.factory.InformerFor(&devops_v1.Cargo{}, f.defaultInformer)
 }
 
 func (f *cargoInformer) Lister() v1.CargoLister {

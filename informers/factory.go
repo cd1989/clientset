@@ -11,9 +11,9 @@ import (
 
 	apiextensions "github.com/caicloud/clientset/informers/apiextensions"
 	apiregistration "github.com/caicloud/clientset/informers/apiregistration"
-	cargo "github.com/caicloud/clientset/informers/cargo"
 	cnetworking "github.com/caicloud/clientset/informers/cnetworking"
 	config "github.com/caicloud/clientset/informers/config"
+	devops "github.com/caicloud/clientset/informers/devops"
 	loadbalance "github.com/caicloud/clientset/informers/loadbalance"
 	release "github.com/caicloud/clientset/informers/release"
 	resource "github.com/caicloud/clientset/informers/resource"
@@ -84,9 +84,9 @@ type SharedInformerFactory interface {
 
 	Apiextensions() apiextensions.Interface
 	Apiregistration() apiregistration.Interface
-	Resource() cargo.Interface
 	Cnetworking() cnetworking.Interface
 	Config() config.Interface
+	Devops() devops.Interface
 	Loadbalance() loadbalance.Interface
 	Release() release.Interface
 	Resource() resource.Interface
@@ -101,16 +101,16 @@ func (f *sharedInformerFactory) Apiregistration() apiregistration.Interface {
 	return apiregistration.New(f, f.namespace, f.tweakListOptions)
 }
 
-func (f *sharedInformerFactory) Resource() cargo.Interface {
-	return cargo.New(f, f.namespace, f.tweakListOptions)
-}
-
 func (f *sharedInformerFactory) Cnetworking() cnetworking.Interface {
 	return cnetworking.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Config() config.Interface {
 	return config.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Devops() devops.Interface {
+	return devops.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Loadbalance() loadbalance.Interface {

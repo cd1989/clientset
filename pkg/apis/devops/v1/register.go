@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-const GroupName = "resource.caicloud.io"
+const GroupName = "devops.caicloud.io"
 
 // GroupVersion is the identifier for the API which includes
 // the name of the group and the version of the API
